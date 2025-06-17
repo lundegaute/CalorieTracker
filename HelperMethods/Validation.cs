@@ -11,5 +11,13 @@ namespace CalorieTracker.HelperMethods
                 throw new ArgumentException("User already exists with this email.");
             }
         }
+        public static void CheckIfNull<T>(T entity)
+        {
+            if (entity is null)
+            {
+                throw new ArgumentException($"{typeof(T).Name} not found in database");
+            }
+        }
+        
     }
 }

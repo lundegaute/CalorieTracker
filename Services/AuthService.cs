@@ -27,10 +27,11 @@ namespace CalorieTracker.Services
 
         public async Task RegisterUserAsync(RegisterUserDTO user)
         {
-            Console.WriteLine("-------------------- AuthService RegisterUserAsync --------------------");
+            // Check if user already exists
             var userExists = await _context.Users.AnyAsync(u => u.Email == user.Email);
             Validation.DoesUserAlreadyExist(userExists);
 
+            // Hash the password and create a new user
             var passwordHasher = new PasswordHasher<User>();
             var hashedPassword = passwordHasher.HashPassword(null, user.Password);
             var newUser = new User
@@ -41,6 +42,20 @@ namespace CalorieTracker.Services
             };
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> ValidateUser(LoginUserDTO user)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+            Validation.CheckIfNull(existingUser);
+
+            var passwordHasher = new PasswordHasher<User>(); // ! Null forgiving operator. I know existingUser is not null, if i get past the Validation
+            var result = passwordHasher.VerifyHashedPassword(existingUser!, existingUser!.PasswordHash, user.Password);
+            if (result == PasswordVerificationResult.Success)
+            {
+                return GenerateToken(existingUser);
+            }
+            throw new UnauthorizedAccessException("Invalid credentials");
         }
         public string GenerateToken(User user)
         {
@@ -58,6 +73,10 @@ namespace CalorieTracker.Services
                 expires: DateTime.Now.AddMinutes(_jwtSettings.ExpireMinutes),
                 signingCredentials: creds
             );
+
+            
+
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

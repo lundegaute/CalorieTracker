@@ -27,9 +27,7 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                Console.WriteLine("-------------------- User Controller RegisterUser --------------------");
                 await _authService.RegisterUserAsync(user);
-                Console.WriteLine("-------------------- User Controller RegisterUser --------------------");
                 return Ok(new { message = "User registered successfully." });
             }
             catch (ArgumentException e)
@@ -39,6 +37,38 @@ namespace CalorieTracker.Controllers
             catch (HttpRequestException)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while registering the user." });
+            }
+        }
+
+        [HttpPost("Login")]
+        [SwaggerRequestExample(typeof(LoginUserDTO), typeof(LoginUserExample))]
+        public async Task<ActionResult<string>> Login([FromBody] LoginUserDTO user)
+        {
+            try
+            {
+                var token = await _authService.ValidateUser(user);
+                int expireMinutes = _jwtSettings.ExpireMinutes;
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(expireMinutes),
+                };
+                Response.Cookies.Append("token", token, cookieOptions);
+                return Ok(token);
+            }
+            catch (ArgumentException e) // If Email does not match any in databse
+            {
+                return BadRequest(new { message = e.Message });
+            }
+            catch (UnauthorizedAccessException e) // If Credentials is wrong
+            {
+                return BadRequest(new { message = e.Message });
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Server error" });
             }
         }
     }

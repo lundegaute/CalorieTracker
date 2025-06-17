@@ -4,11 +4,13 @@ using Newtonsoft.Json.Linq;
 using CalorieTracker.Services;
 using CalorieTracker.Models;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CalorieTracker.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FoodsController : ControllerBase
     {
         private readonly FoodService _foodService;
@@ -30,7 +32,8 @@ namespace CalorieTracker.Controllers
             {
                 var foods = await _foodService.GetFoodsAsync();
                 return Ok(foods);
-            } catch ( HttpRequestException)
+            }
+            catch (HttpRequestException)
             {
                 return StatusCode(500, $"Error fetching data from database");
             }
