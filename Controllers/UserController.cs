@@ -21,6 +21,13 @@ namespace CalorieTracker.Controllers
             _jwtSettings = jwtSettings.Value;
         }
 
+
+        /// <summary>
+        /// Register a new user to the Sql database
+        /// </summary>
+        /// <response code="200">User registered successfully</response>
+        /// <response code="400">If the user already exists or if the input is invalid</response>
+        /// <response code="500">If there is an error registering the user</response>
         [HttpPost("Register")]
         [SwaggerRequestExample(typeof(RegisterUserDTO), typeof(RegisterUserExample))]
         public async Task<ActionResult> RegisterUser([FromBody] RegisterUserDTO user)
@@ -40,6 +47,13 @@ namespace CalorieTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Login a user and return a JWT token
+        /// The token is stored in a secure HttpOnly cookie
+        /// </summary>
+        /// <response code="200">Returns a JWT token</response>
+        /// <response code="400">If the email does not match any user or if the credentials are wrong</response>
+        /// <response code="500">If there is an error logging in the user</response>
         [HttpPost("Login")]
         [SwaggerRequestExample(typeof(LoginUserDTO), typeof(LoginUserExample))]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserDTO user)

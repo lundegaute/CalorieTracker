@@ -60,8 +60,9 @@ namespace CalorieTracker.Services
         public string GenerateToken(User user)
         {
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique identifier for the token
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email), // Subject of the token, typically the user's email
+                new Claim(ClaimTypes.Role, user.Role), // User's role, can be used for authorization
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -73,9 +74,6 @@ namespace CalorieTracker.Services
                 expires: DateTime.Now.AddMinutes(_jwtSettings.ExpireMinutes),
                 signingCredentials: creds
             );
-
-            
-
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
