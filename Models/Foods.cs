@@ -1,4 +1,5 @@
 // Food myDeserializedClass = JsonConvert.DeserializeObject<Food>(myJsonResponse);
+// This file is to fetch advanced data from Matvaretabellen API
 namespace CalorieTracker.Models
 {
     public class Calories
