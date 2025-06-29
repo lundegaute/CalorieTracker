@@ -22,4 +22,10 @@ namespace CalorieTracker.DTO
         [MinLength(6)]
         public string Password { get; set; }
     }
+    public class ResponseUserDTO
+    {
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+    }
 }
