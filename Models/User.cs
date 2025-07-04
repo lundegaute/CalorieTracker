@@ -8,6 +8,6 @@ namespace CalorieTracker.Models
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Role { get; set; }
-        public ICollection<UserMeals>? UserMeals { get; set; }
+        public ICollection<MealName>? MealNames { get; set; }
     }
 }

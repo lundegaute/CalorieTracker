@@ -35,6 +35,9 @@ namespace CalorieTracker.Data
                     .HasMany(mn => mn.Meals)
                     .WithOne(m => m.MealName)
                     .OnDelete(DeleteBehavior.Restrict);
+                entity
+                    .HasOne(mn => mn.User)
+                    .WithMany(u => u.MealNames);
             });
             modelBuilder.Entity<FoodSummary>(entity =>
             {
@@ -49,16 +52,6 @@ namespace CalorieTracker.Data
                 .WithOne(m => m.Food)
                 .OnDelete(DeleteBehavior.Restrict);
             });
-            modelBuilder.Entity<UserMeals>(entity =>
-            {
-                entity.HasKey(um => um.Id);
-                entity
-                    .HasOne(um => um.User)
-                    .WithMany(u => u.UserMeals);
-                entity
-                    .HasOne(um => um.MealName)
-                    .WithMany(mn => mn.UserMeals);
-            });
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -67,7 +60,7 @@ namespace CalorieTracker.Data
                 entity.Property(e => e.PasswordHash).IsRequired();
                 entity.Property(e => e.Role).IsRequired();
                 entity
-                    .HasMany(u => u.UserMeals)
+                    .HasMany(u => u.MealNames)
                     .WithOne(mn => mn.User);
             });
         }
