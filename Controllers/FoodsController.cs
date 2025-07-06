@@ -60,7 +60,7 @@ namespace CalorieTracker.Controllers
         }
 
         /// <summary>
-        /// This Route is testing a detailed creation of food data from Matvaretabellen API
+        /// This fetches all detailed data from matvaretabellen api and stores it in mongoDB if not already there
         /// </summary>
         /// <returns></returns>
         [HttpGet("AllFoodData")]
@@ -80,7 +80,7 @@ namespace CalorieTracker.Controllers
         }
 
         /// <summary>
-        /// This will initialize the MongoDB database with food data from MatvareTabellen.
+        /// This fetches a simple version of matvaretabellens api data and stores it in mongoDB if not already there
         /// </summary>
         /// <response code="200">Returns a success message</response>
         /// <response code="500">If there is an error fetching data from the database</response>

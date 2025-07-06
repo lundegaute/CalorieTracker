@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CalorieTracker.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250627192657_RemovingUserFromMealTable")]
-    partial class RemovingUserFromMealTable
+    [Migration("20250706190535_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,10 +22,11 @@ namespace CalorieTracker.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CalorieTracker.Models.FoodSummary", b =>
+            modelBuilder.Entity("CalorieTracker.Models.FoodSummarySql", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<double>("Calories")
                         .HasColumnType("double");
@@ -57,9 +58,8 @@ namespace CalorieTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("FoodId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
 
                     b.Property<int>("MealNameId")
                         .HasColumnType("int");
@@ -86,7 +86,12 @@ namespace CalorieTracker.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MealNames");
                 });
@@ -118,30 +123,9 @@ namespace CalorieTracker.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CalorieTracker.Models.UserMeals", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("MealNameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealNameId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserMeals");
-                });
-
             modelBuilder.Entity("CalorieTracker.Models.Meal", b =>
                 {
-                    b.HasOne("CalorieTracker.Models.FoodSummary", "Food")
+                    b.HasOne("CalorieTracker.Models.FoodSummarySql", "Food")
                         .WithMany("Meals")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -158,26 +142,18 @@ namespace CalorieTracker.Migrations
                     b.Navigation("MealName");
                 });
 
-            modelBuilder.Entity("CalorieTracker.Models.UserMeals", b =>
+            modelBuilder.Entity("CalorieTracker.Models.MealName", b =>
                 {
-                    b.HasOne("CalorieTracker.Models.MealName", "MealName")
-                        .WithMany("UserMeals")
-                        .HasForeignKey("MealNameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CalorieTracker.Models.User", "User")
-                        .WithMany("UserMeals")
+                        .WithMany("MealNames")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MealName");
-
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CalorieTracker.Models.FoodSummary", b =>
+            modelBuilder.Entity("CalorieTracker.Models.FoodSummarySql", b =>
                 {
                     b.Navigation("Meals");
                 });
@@ -185,13 +161,11 @@ namespace CalorieTracker.Migrations
             modelBuilder.Entity("CalorieTracker.Models.MealName", b =>
                 {
                     b.Navigation("Meals");
-
-                    b.Navigation("UserMeals");
                 });
 
             modelBuilder.Entity("CalorieTracker.Models.User", b =>
                 {
-                    b.Navigation("UserMeals");
+                    b.Navigation("MealNames");
                 });
 #pragma warning restore 612, 618
         }

@@ -61,7 +61,8 @@ namespace CalorieTracker.Services
         {
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique identifier for the token
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email), // Subject of the token, typically the user's email
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Adds the userID to the token claims
+                new Claim(ClaimTypes.Email, user.Email), // Subject of the token, typically the user's email
                 new Claim(ClaimTypes.Role, user.Role), // User's role, can be used for authorization
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));

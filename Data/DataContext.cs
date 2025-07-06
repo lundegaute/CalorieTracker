@@ -7,7 +7,7 @@ namespace CalorieTracker.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
-        public DbSet<FoodSummary> Foods { get; set; }
+        public DbSet<FoodSummarySql> Foods { get; set; }
         public DbSet<MealName> MealNames { get; set; }
         public DbSet<Meal> Meals { get; set; }
 
@@ -39,7 +39,7 @@ namespace CalorieTracker.Data
                     .HasOne(mn => mn.User)
                     .WithMany(u => u.MealNames);
             });
-            modelBuilder.Entity<FoodSummary>(entity =>
+            modelBuilder.Entity<FoodSummarySql>(entity =>
             {
                 entity.HasKey(f => f.Id);
                 entity.Property(f => f.Name).IsRequired();

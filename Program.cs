@@ -116,6 +116,7 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<RegisterUserExample>();
 // Dependency Injections
 builder.Services.AddScoped<FoodService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<MealNameService>();
 
 // Adding CORS policy to allow requests from the frontend
 builder.Services.AddCors(options =>
