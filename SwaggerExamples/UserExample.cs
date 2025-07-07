@@ -1,5 +1,4 @@
 
-
 using CalorieTracker.DTO;
 using Swashbuckle.AspNetCore.Filters;
 

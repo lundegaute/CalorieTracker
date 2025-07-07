@@ -15,7 +15,18 @@ namespace CalorieTracker.HelperMethods
         {
             if (entity is null)
             {
-                throw new ArgumentException($"{typeof(T).Name} not found in database");
+                throw new KeyNotFoundException($"{typeof(T).Name} not found in database");
+            }
+        }
+        public static void CheckIfIdInRange(int id)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id);
+        }
+        public static void IfInDatabaseThrowException(bool isDuplicate, string className)
+        {
+            if (isDuplicate)
+            {
+                throw new ArgumentException($"{className} already in database");
             }
         }
         

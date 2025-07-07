@@ -72,7 +72,7 @@ namespace CalorieTracker.Controllers
                 Response.Cookies.Append("token", token, cookieOptions);
                 return Ok(token);
             }
-            catch (ArgumentException e) // If Email does not match any in databse
+            catch (KeyNotFoundException e) // If Email does not match any in databse
             {
                 return BadRequest(new { message = e.Message });
             }
