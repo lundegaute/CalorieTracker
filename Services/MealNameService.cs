@@ -55,6 +55,41 @@ namespace CalorieTracker.Services
             var MealNameresponse = ResponseBuilder.MealName([newMealName]);
             return MealNameresponse.FirstOrDefault()!;
         }
+
+        public async Task UpdateMealName(int id, UpdateMealNameDTO updateMealNameDTO, int userID)
+        {
+            Validation.CheckIfIdInRange(userID);
+            Validation.CheckIfIdInRange(id);
+
+            var mealNameExists = await _context
+                .MealNames
+                .AnyAsync(mn =>
+                mn.Name.ToLower() == updateMealNameDTO.Name.Trim().ToLower() &&
+                mn.User.Id == userID &&
+                mn.Id != id);
+            Validation.IfInDatabaseThrowException(mealNameExists, typeof(MealName).Name);
+
+            var user = await _context.Users.FindAsync(userID);
+            Validation.CheckIfNull(user);
+
+            var MealNameInDB = await _context.MealNames.FirstOrDefaultAsync(mn => mn.Id == id);
+            Validation.CheckIfNull(MealNameInDB);
+            MealNameInDB!.Name = updateMealNameDTO.Name;
+            _context.MealNames.Update(MealNameInDB);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteMealName(int id, int userID)
+        {
+            Validation.CheckIfIdInRange(userID);
+            Validation.CheckIfIdInRange(id);
+
+            var mealName = await _context.MealNames.FirstOrDefaultAsync(mn => mn.Id == id && mn.User.Id == userID);
+            Validation.CheckIfNull(mealName);
+
+            _context.MealNames.Remove(mealName!);
+            await _context.SaveChangesAsync();
+        }
         
     }
 }

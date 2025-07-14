@@ -42,6 +42,7 @@ namespace CalorieTracker.Data
             modelBuilder.Entity<FoodSummarySql>(entity =>
             {
                 entity.HasKey(f => f.Id);
+                entity.HasIndex(f => f.Name).IsUnique(); 
                 entity.Property(f => f.Name).IsRequired();
                 entity.Property(f => f.Protein).IsRequired();
                 entity.Property(f => f.Carbohydrates).IsRequired();
