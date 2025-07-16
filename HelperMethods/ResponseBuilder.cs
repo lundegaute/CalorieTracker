@@ -1,5 +1,6 @@
 using CalorieTracker.Models;
 using CalorieTracker.DTO;
+using CalorieTracker.HelperMethods;
 
 namespace CalorieTracker.HelperMethods
 {
@@ -28,6 +29,32 @@ namespace CalorieTracker.HelperMethods
                 Fat = f.Fat
             }));
             return foodResponse;
+        }
+        public static List<ResponseMealDTO> Meals(IEnumerable<Meal> meals)
+        {
+            var mealResponse = new List<ResponseMealDTO>();
+            mealResponse.AddRange(meals.Select(m => new ResponseMealDTO
+            {
+                Id = m.Id,
+                Quantity = m.Quantity,
+                MealName = m.MealName,
+                Food = m.Food,
+            }));
+            return mealResponse;
+        }
+
+        public static GenericResponse BuildGenericResponse(List<string> message, string type, string title, int status)
+        {
+            var genericResponse = new GenericResponse
+            {
+                message = new Dictionary<string, List<string>> {
+                    {"Error", message }
+                },
+                type = type,
+                title = title,
+                status = status
+            };
+            return genericResponse;
         }
     }
 }

@@ -1,5 +1,0 @@
-
-namespace CalorieTracker.ValidationHelper
-{
-    
-}
