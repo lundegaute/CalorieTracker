@@ -64,7 +64,7 @@ namespace CalorieTracker.Controllers
             try
             {
                 var addedFood = await _foodSqlService.AddFood(addFoodDTO);
-                return CreatedAtAction(nameof(GetFood), new { id = addedFood.Id, addedFood });
+                return CreatedAtAction(nameof(GetFood), new { id = addedFood.Id }, addedFood);
             }
             catch (ArgumentException e) { return BadRequest(new { message = e.Message }); }
             catch (HttpRequestException) { return StatusCode(500, "Server error adding new Food to DB"); }

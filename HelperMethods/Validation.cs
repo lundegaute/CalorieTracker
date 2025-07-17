@@ -22,6 +22,10 @@ namespace CalorieTracker.HelperMethods
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id);
         }
+        public static void ThrowErrorIfNegative(double number)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(number);
+        }
         public static void IfInDatabaseThrowException(bool isDuplicate, string className)
         {
             if (isDuplicate)

@@ -44,7 +44,7 @@ namespace CalorieTracker.Services
                 Fat = foodDTO.Fat,
             };
             await _context.Foods.AddAsync(foodToAdd);
-
+            await _context.SaveChangesAsync();
             var getNewFood = await _context.Foods.FindAsync(foodToAdd.Id);
             var response = ResponseBuilder.Foods([getNewFood!]);
             return response.FirstOrDefault()!;

@@ -31,8 +31,8 @@ namespace CalorieTracker.DTO
     {
         public int Id { get; set; }
         public double Quantity { get; set; }
-        public MealName MealName { get; set; }
-        public FoodSummarySql Food { get; set; }
+        public string MealName { get; set; }
+        public string Food { get; set; }
     }
 
 }

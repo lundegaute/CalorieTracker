@@ -34,7 +34,7 @@ namespace CalorieTracker.Data
                 entity
                     .HasMany(mn => mn.Meals)
                     .WithOne(m => m.MealName)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
                 entity
                     .HasOne(mn => mn.User)
                     .WithMany(u => u.MealNames);

@@ -28,7 +28,7 @@ namespace CalorieTracker.Controller
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var meals = await _mealService.GetMealsForUser(userID);
+                var meals = await _mealService.GetMealsForUser(int.Parse(userID!));
                 return Ok(meals);
             }
             catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
@@ -47,7 +47,7 @@ namespace CalorieTracker.Controller
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var meal = await _mealService.GetMeal(id, userID);
+                var meal = await _mealService.GetMealForUser(id, int.Parse(userID));
                 return Ok(meal);
             }
             catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
@@ -68,7 +68,7 @@ namespace CalorieTracker.Controller
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var createdMeal = await _mealService.AddMeal(addMealDTO, userID);
+                var createdMeal = await _mealService.AddMealToUser( int.Parse(userID!), addMealDTO);
                 return CreatedAtAction(nameof(GetMealForUser), new { id = createdMeal.Id }, createdMeal);
             }
             catch (ArgumentOutOfRangeException e)
@@ -101,7 +101,7 @@ namespace CalorieTracker.Controller
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                await _mealService.UpdateMeal(id, userID, updateMealDTO);
+                await _mealService.UpdateMealForUser(id, int.Parse(userID), updateMealDTO);
                 return Ok(new { message = "Meal updated successfully" });
             }
             catch (ArgumentOutOfRangeException e)
@@ -126,33 +126,35 @@ namespace CalorieTracker.Controller
             }
         }
 
+        /// <summary>
+        /// Delete a food item from the specified meal for the logged in user
+        /// </summary>
+        /// <response code="200">Returns a success message</response>
+        /// <response code="400">If the meal ID or user ID is invalid</response>
+        /// <response code="404">If the meal with the given ID does not exist for the user</response>
+        /// <response code="500">If there is a server error while deleting the meal</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMealForUser(int id)
         {
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                await _mealService.DeleteMeal(id, userID);
+                await _mealService.DeleteFoodForUser(id, int.Parse(userID));
                 return Ok("Meal deleted successfully");
             }
             catch (ArgumentOutOfRangeException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal update", 400);
-                return BadRequest(response);
-            }
-            catch (ArgumentException e)
-            {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error during Meal update", 400);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal delete", 400);
                 return BadRequest(response);
             }
             catch (KeyNotFoundException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal update", 404);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal delete", 404);
                 return BadRequest(response);
             }
             catch (HttpRequestException)
             {
-                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error during Meal update", 500);
+                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error during Meal delete", 500);
                 return BadRequest(response);
             }
         }
