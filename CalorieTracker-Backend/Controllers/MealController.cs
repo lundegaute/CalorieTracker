@@ -42,12 +42,12 @@ namespace CalorieTracker.Controller
         /// <response code="404">If the meal with the given ID does not exist for the user</response>
         /// <response code="500">If there is a server error while fetching the meal</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMealDTO>> GetMealForUser(int id)
+        public async Task<ActionResult<IEnumerable<ResponseMealDTO>>> GetMealForUser(int mealNameId)
         {
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var meal = await _mealService.GetMealForUser(id, int.Parse(userID));
+                var meal = await _mealService.GetMealForUser(mealNameId, int.Parse(userID));
                 return Ok(meal);
             }
             catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }

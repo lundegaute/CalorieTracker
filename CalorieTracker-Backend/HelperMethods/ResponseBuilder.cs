@@ -37,8 +37,20 @@ namespace CalorieTracker.HelperMethods
             {
                 Id = m.Id,
                 Quantity = m.Quantity,
-                MealName = m.MealName.Name,
-                Food = m.Food.Name,
+                MealName = new ResponseMealNameDTO
+                {
+                    Id = m.MealName.Id,
+                    Name = m.MealName.Name
+                },
+                Food = new ResponseFoodDTO
+                {
+                    Id = m.Food.Id,
+                    Name = m.Food.Name,
+                    Calories = m.Food.Calories,
+                    Protein = m.Food.Protein,
+                    Carbohydrates = m.Food.Carbohydrates,
+                    Fat = m.Food.Fat,
+                },
             }));
             return mealResponse;
         }
