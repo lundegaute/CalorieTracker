@@ -28,4 +28,23 @@ export type MealSummary = {
     TotalFat: number;
 }
 
+export type Error = {
+    Error: string[];
+}
+
+export type ErrorResponse = {
+  "message": Error;
+  "type": string;
+  "title": string;
+  "status": number;
+}
+
+export type LoginUserDTO = {
+    email: string;
+    password: string;
+}
+
+export type LoginResponse = {
+    token: string;
+}
 

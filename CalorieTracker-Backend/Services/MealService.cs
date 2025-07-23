@@ -53,7 +53,11 @@ namespace CalorieTracker.Services
                 m.MealName.Id == addMealDTO.MealNameId);
             Validation.IfInDatabaseThrowException(foodAlreadyInMeal, "Food");
 
-            var mealName = await _context.MealNames.FindAsync(addMealDTO.MealNameId);
+            var mealName = await _context.MealNames
+                .Include(mn => mn.User)
+                .Where(mn => mn.User.Id == userID &&
+                            mn.Id == addMealDTO.MealNameId)
+                .FirstOrDefaultAsync();
             Validation.CheckIfNull(mealName);
             var food = await _context.Foods.FindAsync(addMealDTO.FoodId);
             Validation.CheckIfNull(food);

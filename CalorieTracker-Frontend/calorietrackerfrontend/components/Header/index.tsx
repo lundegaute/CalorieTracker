@@ -17,10 +17,10 @@ function Header() {
                         <Link href="/" className="hover:underline">Home</Link>
                     </li>
                     <li>
-                        <Link href="/about" className="hover:underline">Login</Link>
+                        <Link href="/Auth/Login" className="hover:underline">Login</Link>
                     </li>
                     <li>
-                        <Link href="/about" className="hover:underline">Register</Link>
+                        <Link href="/Auth/Register" className="hover:underline">Register</Link>
                     </li>
                     <li>
                         <Link href="/Meals" className="hover:underline">Meals</Link>

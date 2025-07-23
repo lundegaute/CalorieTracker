@@ -1,14 +1,14 @@
 
 const BASE_URL = process.env.CalorieTracker_Base_Url;
 
-export const API_URL = {
+export const API_ENDPOINTS = {
     base: BASE_URL,
-    login: `${BASE_URL}/auth/login`,
-    register: `${BASE_URL}/auth/register`,
-    User: `${BASE_URL}/user`,
-    MealName: `${BASE_URL}/mealname`,
-    Meal: `${BASE_URL}/meal`,
-    Search: `${BASE_URL}/search`,
-    Food: `${BASE_URL}/food`,
+    LOGIN: `${BASE_URL}/User/Login`,
+    REGISTER: `${BASE_URL}/User/Register`,
+    USER: `${BASE_URL}/User`,
+    MEAL_NAME: `${BASE_URL}/MealName`,
+    MEAL: `${BASE_URL}/Meal`,
+    SEARCH: `${BASE_URL}/Search`,
+    FOOD: `${BASE_URL}/Food`,
 
 }
