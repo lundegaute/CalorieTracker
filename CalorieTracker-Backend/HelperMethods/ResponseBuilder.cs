@@ -46,10 +46,10 @@ namespace CalorieTracker.HelperMethods
                 {
                     Id = m.Food.Id,
                     Name = m.Food.Name,
-                    Calories = m.Food.Calories,
-                    Protein = m.Food.Protein,
-                    Carbohydrates = m.Food.Carbohydrates,
-                    Fat = m.Food.Fat,
+                    Calories = m.Food.Calories * (m.Quantity/100),
+                    Protein = m.Food.Protein * (m.Quantity/100),
+                    Carbohydrates = m.Food.Carbohydrates * (m.Quantity/100),
+                    Fat = m.Food.Fat * (m.Quantity/100),
                 },
             }));
             return mealResponse;

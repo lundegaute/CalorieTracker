@@ -1,4 +1,4 @@
-import { MealSummary, Meal } from "@/Types/types";
+import { MealSummary, Meal, MealFood } from "@/Types/types";
 
 export const helper = {
     buildMealSummery: (meals: Meal[]): Map<number, MealSummary> => {
@@ -22,4 +22,19 @@ export const helper = {
         });
         return mealMap;
     },
+    buildFoodList: (meals: Meal[]): MealFood[] => {
+        const foodList: MealFood[] = [];
+        meals.forEach((meal: Meal) => {
+            foodList.push({
+                mealId: meal.id,
+                quantity: meal.quantity,
+                foodName: meal.food.name,
+                calories: Math.round(meal.food.calories),
+                protein: Math.round(meal.food.protein),
+                carbohydrates: Math.round(meal.food.carbohydrates),
+                fat: Math.round(meal.food.fat),
+            })
+        })
+        return foodList;
+    }
 }

@@ -13,7 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 export default function MealGrid() {
   
   const { data: meals, error, isLoading: isLoadingMeals, refetch: refetchMeals } = useQuery<Meal[], ErrorResponse>({
-    queryKey: ["MealSummary"],
+    queryKey: ["MealsSummary"],
     queryFn: async () => fetchGet<Meal[]>("/api/Meals"), 
     retry: 0,
   })

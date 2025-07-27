@@ -62,7 +62,7 @@ namespace CalorieTracker.Controller
         /// <response code="400">Id or userID 0 or negative</response>
         /// <response code="404">If the meal with the given ID does not exist for the user</response>
         /// <response code="500">If there is a server error while fetching the meal</response>
-        [HttpGet("{id}")]
+        [HttpGet("{mealNameId}")]
         public async Task<ActionResult<IEnumerable<ResponseMealDTO>>> GetMealForUser(int mealNameId)
         {
             try

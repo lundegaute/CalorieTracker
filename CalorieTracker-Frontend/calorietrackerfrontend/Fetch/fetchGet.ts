@@ -2,16 +2,16 @@
 import { ErrorResponse } from "@/Types/types";
 
 export async function fetchGet<T>(url: string): Promise<T> {
-    console.log(`----- FETCH GET FUNCTION -----`)
+    console.log(`----- FETCH GET FUNCTION -----`);
     console.log(url);
     try {
-        const res = await fetch(url, {  // ✅ Use the url parameter, not hardcoded 
+        const res = await fetch(url, {
             method: "GET",
-            credentials: "include", // Include cookies stored in the browser
+            credentials: "include", // Sending browser cookies to the next.js server router
         });
         if (!res.ok) {
-            console.log("------ FETCH GET NOT OK -----"); // I get here. but json response from mealController is not correct? 
-            const errorData: ErrorResponse = await res.json(); // Something wrong with the response
+            console.log("------ FETCH GET NOT OK -----"); 
+            const errorData: ErrorResponse = await res.json();
             console.log(errorData.message);
             console.log(errorData.type);
             if (errorData.type === "Authorization") {

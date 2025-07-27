@@ -50,7 +50,6 @@ namespace CalorieTracker.Controllers
 
         /// <summary>
         /// Login a user and return a JWT token
-        /// The token is stored in a secure HttpOnly cookie
         /// </summary>
         /// <response code="200">Returns a JWT token</response>
         /// <response code="400">If the email does not match any user or if the credentials are wrong</response>

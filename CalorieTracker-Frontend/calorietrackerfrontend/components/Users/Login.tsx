@@ -30,7 +30,7 @@ function Login () {
         } else {
             const errorResponse = res as ErrorResponse;
             console.log("Error Response:", errorResponse);
-            alert(`Error: ${errorResponse.message.Error[0]}`);
+            alert(`Error: ${errorResponse.message.error[0]}`);
         }
 
     }

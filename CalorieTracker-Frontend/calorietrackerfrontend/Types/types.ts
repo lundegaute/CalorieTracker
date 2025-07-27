@@ -27,6 +27,15 @@ export type MealSummary = {
     totalCarbohydrates: number;
     totalFat: number;
 }
+export type MealFood = {
+    mealId: number;
+    quantity: number;
+    foodName: string;
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    fat: number;
+}
 
 export type Error = {
     error: string[];

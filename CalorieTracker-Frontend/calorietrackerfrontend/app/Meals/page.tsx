@@ -1,5 +1,4 @@
 "use client";
-import MealGrid from "@/components/DataGrids/MealGrid";
 import MealNames from "@/components/DataGrids/MealNames";
 function Meals() {
 
