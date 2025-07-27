@@ -1,35 +1,35 @@
 
 export type Food = {
     id: number;
-    Name: string;
-    Calories: number;
-    Protein: number;
-    Carbohydrates: number;
-    Fat: number;
+    name: string;
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    fat: number;
 }
 
 export type MealName = {
     id: number;
-    Name: string;
+    name: string;
 }
 
 export type Meal = {
     id: number;
-    Quantity: number;
-    MealName: MealName;
-    Food: Food;
+    quantity: number;
+    mealName: MealName;
+    food: Food;
 }
 export type MealSummary = {
-    MealNameId: number;
-    MealName: string;
-    TotalCalories: number;
-    TotalProtein: number;
-    TotalCarbohydrates: number;
-    TotalFat: number;
+    mealNameId: number;
+    mealName: string;
+    totalCalories: number;
+    totalProtein: number;
+    totalCarbohydrates: number;
+    totalFat: number;
 }
 
 export type Error = {
-    Error: string[];
+    error: string[];
 }
 
 export type ErrorResponse = {

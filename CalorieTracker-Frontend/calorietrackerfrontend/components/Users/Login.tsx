@@ -2,7 +2,7 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { LoginUserDTO, ErrorResponse, LoginResponse } from '@/Types/types';
-import { FetchLoginPost } from '@/Utils/fetchLoginPost';
+import { FetchLoginPost } from '@/Fetch/fetchLoginPost';
 import { useRouter } from 'next/navigation'; 
 import {useAuthStore} from "@/components/Zustand/AuthStore";
 
@@ -21,7 +21,6 @@ function Login () {
             password: password as string,
         }
         console.log("---------- LOGIN COMPONENT FILE ----------");
-        console.log("Login User DTO:", loginUserDTO);
         const res = await FetchLoginPost(loginUserDTO);
         if ( typeof res === "string" ) {
             const token = res as string;

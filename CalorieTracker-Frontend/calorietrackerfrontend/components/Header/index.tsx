@@ -1,9 +1,12 @@
 "use client";
 import Link from "next/link";
 import ThemeSwitch from "@/components/Theme/ThemeSwitch";
-
+import LoggedIn from "@/components/Header/LoggedInHeader";
+import LoggedOut from "@/components/Header/LoggedOutHeader";
+import {useAuthStore} from "@/components/Zustand/AuthStore";
 
 function Header() {
+    const isAuthenticated = useAuthStore().isAuthenticated;
 
     return (
         <header className="bg-gray-800 text-white p-5 flex justify-between">
@@ -11,20 +14,23 @@ function Header() {
                 <Link href="/" className="hover:underline text-2xl font-bold">Calorie Tracker</Link>
                 <ThemeSwitch />
             </div>
-            <nav className="mt-2">
+            <nav className="mt-2 flex items-center">
                 <ul className="flex space-x-4">
                     <li>
                         <Link href="/" className="hover:underline">Home</Link>
                     </li>
                     <li>
-                        <Link href="/Auth/Login" className="hover:underline">Login</Link>
-                    </li>
-                    <li>
-                        <Link href="/Auth/Register" className="hover:underline">Register</Link>
-                    </li>
-                    <li>
                         <Link href="/Meals" className="hover:underline">Meals</Link>
-                    </li>    
+                    </li> 
+                    {isAuthenticated ? (
+                        <li>
+                            <LoggedIn />
+                        </li>
+                    ) : (
+                        <li >
+                            <LoggedOut />
+                        </li>
+                    )}
                 </ul>
             </nav>
         </header>

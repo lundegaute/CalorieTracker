@@ -3,11 +3,16 @@ using CalorieTracker.DTO;
 using CalorieTracker.Services;
 using CalorieTracker.HelperMethods;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using CalorieTracker.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CalorieTracker.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class MealController : ControllerBase
     {
         private readonly MealService _mealService;
@@ -27,12 +32,28 @@ namespace CalorieTracker.Controller
         {
             try
             {
+                Console.WriteLine("------ Getting meals for user -----");
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                Validation.CheckIfNull(userID);
                 var meals = await _mealService.GetMealsForUser(int.Parse(userID!));
                 return Ok(meals);
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
-            catch (HttpRequestException) { return StatusCode(500, new { message = "Server Error fetching meals for user" }); }
+            catch (SecurityTokenException e)
+            {
+                Console.WriteLine($"Token validation failed: {e.Message}");
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(SecurityTokenException).Name, "Token Invalid", 400);
+                return BadRequest(response);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error getting meals for user", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server Error getting meals for user"], typeof(HttpRequestException).Name, "Error getting meal for user", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -50,10 +71,26 @@ namespace CalorieTracker.Controller
                 var meal = await _mealService.GetMealForUser(mealNameId, int.Parse(userID));
                 return Ok(meal);
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
-            catch (ArgumentException e) { return BadRequest(new { message = e.Message }); }
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); }
-            catch (HttpRequestException) { return StatusCode(500, new { message = "Server error fetching meal for user" }); }
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error getting meal for user", 400);
+                return BadRequest(response);
+            }
+            catch (ArgumentException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error getting meal for user", 400);
+                return BadRequest(response);
+            }
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error getting meal for user", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error getting meal for user"], typeof(HttpRequestException).Name, "Error getting meal for user", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -68,7 +105,7 @@ namespace CalorieTracker.Controller
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var createdMeal = await _mealService.AddMealToUser( int.Parse(userID!), addMealDTO);
+                var createdMeal = await _mealService.AddMealToUser(int.Parse(userID!), addMealDTO);
                 return CreatedAtAction(nameof(GetMealForUser), new { id = createdMeal.Id }, createdMeal);
             }
             catch (ArgumentOutOfRangeException e)

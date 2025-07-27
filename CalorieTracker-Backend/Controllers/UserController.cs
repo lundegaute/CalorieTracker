@@ -5,6 +5,7 @@ using CalorieTracker.Configuration;
 using CalorieTracker.DTO;
 using Swashbuckle.AspNetCore.Filters;
 using CalorieTracker.SwaggerExamples;
+using CalorieTracker.HelperMethods;
 
 namespace CalorieTracker.Controllers
 {
@@ -65,12 +66,20 @@ namespace CalorieTracker.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    Secure = false, // Only false in development. Change to true if production
+                    SameSite = SameSiteMode.Lax, // Changed from None to Lax for development
                     Expires = DateTime.UtcNow.AddMinutes(expireMinutes),
+                    Path = "/" // Added explicit path
                 };
                 Response.Cookies.Append("token", token, cookieOptions);
-                return Ok(token);
+
+                // Add detailed logging to verify cookie is being set
+                Console.WriteLine($"Setting cookie 'token' for {expireMinutes} minutes");
+                Console.WriteLine($"Cookie settings: HttpOnly={cookieOptions.HttpOnly}, Secure={cookieOptions.Secure}, SameSite={cookieOptions.SameSite}");
+                Console.WriteLine($"Request origin: {Request.Headers["Origin"]}");
+                Console.WriteLine($"Request host: {Request.Headers["Host"]}");
+
+                return Ok(new { token, message = "Login successful", cookieSet = true });
             }
             catch (KeyNotFoundException e) // If Email does not match any in databse
             {
@@ -84,6 +93,20 @@ namespace CalorieTracker.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Server error" });
             }
+        }
+        [HttpPost("Logout")]
+        public async Task<ActionResult<string>> Logout()
+        {
+            Response.Cookies.Append("token", "", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false, // ✅ Set to true in production
+                SameSite = SameSiteMode.Lax, // ✅ Lax is fine for dev; use None + Secure in prod
+                Path = "/", // ✅ Must match the original path used during login
+                Expires = DateTime.UtcNow.AddDays(-1) // ✅ Force expiration
+            });
+            var response = ResponseBuilder.BuildGenericResponse(["User logged out successfully."], "Authorization", "Logout", 200);
+            return Ok(response);
         }
     }
 }

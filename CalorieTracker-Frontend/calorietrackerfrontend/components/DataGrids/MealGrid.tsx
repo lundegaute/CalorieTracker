@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {Meal, Food, MealName, MealPreview } from '@/Types/types';
+import {Meal, Food, MealName, } from '@/Types/types';
 
 
 export default function MealGrid() {

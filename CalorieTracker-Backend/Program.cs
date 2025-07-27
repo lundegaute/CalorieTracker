@@ -124,8 +124,11 @@ builder.Services.AddScoped<MealService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
-        builder => {
-            builder.WithOrigins("http://localhost:3000")
+        builder =>
+        {
+            builder.WithOrigins(
+                "http://localhost:3000"
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -148,10 +151,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-if (!app.Environment.IsDevelopment()) 
-    {
-        app.UseHttpsRedirection();
-    }
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 

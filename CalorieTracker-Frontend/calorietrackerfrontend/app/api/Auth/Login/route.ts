@@ -14,24 +14,26 @@ export async function POST(req: NextRequest) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
+            credentials: 'include', // Include cookies in the request
         });
         if (!response.ok) {
             const errorData: ErrorResponse = await response.json();
-            return NextResponse.json(errorData, { status: response.status})
+            return NextResponse.json(errorData);
         }
         
         console.log("---------- API LOGIN ROUTE RESPONSE WITH TOKEN ----------");
         const token: string = await response.text();
-        return NextResponse.json(token, { status: 200})
+        return NextResponse.json(token, { status: 200 });
 
     } catch (error) {
         console.log("---------- API LOGIN ROUTE ERROR ----------");
         console.error("Error during login:", error);
-        return NextResponse.json({
+        const errorResponse: ErrorResponse = {
             message: { Error: ["An unexpected error occurred during login"] },
             type: "InternalServerError",
             title: "Login Error",
             status: 500
-        } as ErrorResponse, { status: 500 });
+        }
+        return NextResponse.json(errorResponse);
     }
 }
