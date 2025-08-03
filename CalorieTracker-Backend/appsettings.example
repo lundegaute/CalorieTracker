@@ -1,0 +1,24 @@
+
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "JwtAppSettings": {
+    "SecretKey": "my_secret_key_124342665ewfkwefsdfewfpowroerjgu8934rt398rujdoikvmf3o408j4fj3",
+    "Issuer": "CalorieTrackerIssuer",
+    "Audience": "CalorieTrackerAudience",
+    "ExpireMinutes": 30
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "CalorieTrackerConnection": "server=localhost;database=CalorieTracker;username=;Password="
+  },
+  "MongoDbSettings": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "FoodStorage"
+  }
+}

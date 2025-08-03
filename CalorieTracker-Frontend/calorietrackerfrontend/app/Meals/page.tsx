@@ -1,5 +1,7 @@
-"use client";
+import Button from "@mui/material/Button";
 import MealNames from "@/components/DataGrids/MealNames";
+
+
 function Meals() {
 
     return (

@@ -1,4 +1,4 @@
-import { ErrorResponse, Meal } from "@/Types/types";
+import { ErrorResponse, Meal, MealName } from "@/Types/types";
 import { NextResponse, NextRequest } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
 
@@ -53,5 +53,11 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
         console.log(`ErrorResponse: ${errorResponse.message.error[0]}`);
         return NextResponse.json(errorResponse, { status: errorResponse.status });
     }
+}
+
+export async function POST(req: NextRequest) {
+    const body: MealName = await req.json();
+    console.log("---------- API ROUTE POST A MEAL ----------");
+    // Add new meal
 }
 

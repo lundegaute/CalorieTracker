@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -63,6 +64,11 @@ export default function MealGrid() {
 
   return (
     <Box sx={{ height: 400, width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <Button variant="contained" color="success"  href="/Meals/Add">
+          Add Meal
+        </Button>
+      </Box>
       <DataGrid
         rows={mealSummary}
         columns={columns}
