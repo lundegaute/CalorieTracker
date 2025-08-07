@@ -1,26 +1,23 @@
 import {create} from 'zustand';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS } from '@/lib/constants';
+import Cookies from 'js-cookie';
+import ValidateToken from "@/HelperFunctions/validateToken";
 
 interface AuthState {
-    token: string | null;
-    email: string | null;
     isAuthenticated: boolean;
-    login: (token: string, userEmail: string) => void;
+    login: () => void;
     logout: () => void;
+    checkTokenStatus: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
-            token: null,
-            email: null,
             isAuthenticated: false,
 
-            login: (token: string, userEmail: string) => {
+            login: () => {
                 set({
-                    token: token,
-                    email: userEmail,
                     isAuthenticated: true,
                 })
             },
@@ -33,18 +30,27 @@ export const useAuthStore = create<AuthState>()(
                     credentials: "include", // Include cookies stored in the browser
                 });
                 set({
-                    token: null,
-                    email: null,
                     isAuthenticated: false,
                 });
-            
             },
+            checkTokenStatus: async () => {
+                const token = Cookies.get("token");
+                if ( !token ) {
+                    set({ isAuthenticated: false});
+                    return;
+                }
+                const validation = ValidateToken(token);
+                if ( !validation.isValid) {
+                    console.log("----- INSIDE ZUSTAND AUTHSTORE TOKEN NOT VALID -----");
+                    set({ isAuthenticated: false});
+                } else {
+                    set({ isAuthenticated: true});
+                }
+            }
         }),
         {
             name: "auth-storage", // Name of the storage key
             partialize: (state) => ({
-                token: state.token,
-                user: state.email,
                 isAuthenticated: state.isAuthenticated,
             }),
         }

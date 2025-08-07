@@ -46,13 +46,39 @@ namespace CalorieTracker.HelperMethods
                 {
                     Id = m.Food.Id,
                     Name = m.Food.Name,
-                    Calories = m.Food.Calories * (m.Quantity/100),
-                    Protein = m.Food.Protein * (m.Quantity/100),
-                    Carbohydrates = m.Food.Carbohydrates * (m.Quantity/100),
-                    Fat = m.Food.Fat * (m.Quantity/100),
+                    Calories = m.Food.Calories * (m.Quantity / 100),
+                    Protein = m.Food.Protein * (m.Quantity / 100),
+                    Carbohydrates = m.Food.Carbohydrates * (m.Quantity / 100),
+                    Fat = m.Food.Fat * (m.Quantity / 100),
                 },
             }));
             return mealResponse;
+        }
+        public static List<MealSummaryDTO> MealSummary(IEnumerable<MealName> mealNames, IEnumerable<Meal> meals)
+        {
+            List<MealSummaryDTO> mealSummaryDTO = new List<MealSummaryDTO>();
+            mealSummaryDTO.AddRange(mealNames.Select(mn =>
+            {
+                var mealsForThisName = meals.Where(m => m.MealName.Id == mn.Id).ToList();
+                return new MealSummaryDTO
+                {
+                    Id = mn.Id,
+                    Name = mn.Name,
+                    TotalCalories = mealsForThisName.Any()
+                        ? Math.Round((decimal)mealsForThisName.Sum(m => m.Food.Calories * (m.Quantity / 100)), 2)
+                        : null,
+                    TotalProtein = mealsForThisName.Any()
+                        ? Math.Round((decimal)mealsForThisName.Sum(m => m.Food.Protein * (m.Quantity / 100))!, 2)
+                        : null,
+                    TotalCarbohydrate = mealsForThisName.Any()
+                        ? Math.Round((decimal)mealsForThisName.Sum(m => m.Food.Carbohydrates * (m.Quantity / 100))!, 2)
+                        : null,
+                    TotalFat = mealsForThisName.Any()
+                        ? Math.Round((decimal)mealsForThisName.Sum(m => m.Food.Fat * (m.Quantity / 100))!, 2)
+                        : null
+                };
+            }));
+            return mealSummaryDTO;
         }
 
         public static GenericResponse BuildGenericResponse(List<string> message, string type, string title, int status)

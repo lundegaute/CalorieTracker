@@ -16,7 +16,7 @@ namespace CalorieTracker.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<ResponseMealDTO>> GetMealsForUser(int userID)
+        public async Task<IEnumerable<MealSummaryDTO>> GetMealsForUser(int userID)
         {
             Validation.CheckIfIdInRange(userID);
             var meals = await _context.Meals
@@ -24,7 +24,11 @@ namespace CalorieTracker.Services
                 .Include(m => m.Food)
                 .Where(m => m.MealName.User.Id == userID)
                 .ToListAsync();
-            var response = ResponseBuilder.Meals(meals);
+            var mealNames = await _context.MealNames
+                .Include(mn => mn.User)
+                .Where(mn => mn.User.Id == userID)
+                .ToListAsync();
+            var response = ResponseBuilder.MealSummary(mealNames, meals);
             return response;
         }
         public async Task<IEnumerable<ResponseMealDTO>> GetMealForUser(int mealNameId, int userID)

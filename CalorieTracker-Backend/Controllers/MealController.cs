@@ -28,11 +28,10 @@ namespace CalorieTracker.Controller
         /// <response code="400">If the user ID is not found or invalid</response>
         /// <response code="500">If there is a server error while fetching meals</response
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ResponseMealDTO>>> GetMealsForUser()
+        public async Task<ActionResult<IEnumerable<MealSummaryDTO>>> GetMealsForUser()
         {
             try
             {
-                Console.WriteLine("------ Getting meals for user -----");
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 Validation.CheckIfNull(userID);
                 var meals = await _mealService.GetMealsForUser(int.Parse(userID!));

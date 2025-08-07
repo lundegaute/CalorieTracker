@@ -8,24 +8,24 @@ export type Food = {
     fat: number;
 }
 
-export type MealName = {
+export type MealNameDTO = {
     id: number;
     name: string;
 }
 
-export type Meal = {
+export type MealDTO = {
     id: number;
     quantity: number;
-    mealName: MealName;
+    mealName: MealNameDTO;
     food: Food;
 }
 export type MealSummary = {
-    mealNameId: number;
-    mealName: string;
-    totalCalories: number;
-    totalProtein: number;
-    totalCarbohydrates: number;
-    totalFat: number;
+    id: number
+    name: string;
+    totalCalories: number | null;
+    totalProtein: number | null;
+    totalCarbohydrates: number | null;
+    totalFat: number | null;
 }
 export type MealFood = {
     mealId: number;
@@ -46,6 +46,7 @@ export type ErrorResponse = {
   "type": string;
   "title": string;
   "status": number;
+  "redirect"?: string; // Optional redirect field
 }
 
 export type LoginUserDTO = {
@@ -56,4 +57,10 @@ export type LoginUserDTO = {
 export type LoginResponse = {
     token: string;
 }
+
+export type DecodedToken = {
+    exp: number;
+    iat?: number;
+    sub?: string;
+};
 

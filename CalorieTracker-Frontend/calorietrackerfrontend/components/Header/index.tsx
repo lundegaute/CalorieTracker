@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
+import {useEffect} from "react";
 import ThemeSwitch from "@/components/Theme/ThemeSwitch";
 import LoggedIn from "@/components/Header/LoggedInHeader";
 import LoggedOut from "@/components/Header/LoggedOutHeader";
 import {useAuthStore} from "@/components/Zustand/AuthStore";
 
 function Header() {
-    const isAuthenticated = useAuthStore().isAuthenticated;
+    const {isAuthenticated} = useAuthStore();
 
     return (
         <header className="bg-gray-800 text-white p-5 flex justify-between">

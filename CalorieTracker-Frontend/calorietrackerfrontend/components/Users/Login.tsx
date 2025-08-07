@@ -23,9 +23,7 @@ function Login () {
         console.log("---------- LOGIN COMPONENT FILE ----------");
         const res = await FetchLoginPost(loginUserDTO);
         if ( typeof res === "string" ) {
-            const token = res as string;
-            //alert("Login Successful!");
-            login(token, loginUserDTO.email);
+            login();
             router.push("/");
         } else {
             const errorResponse = res as ErrorResponse;

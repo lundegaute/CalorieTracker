@@ -1,4 +1,4 @@
-import { ErrorResponse, Meal, MealName } from "@/Types/types";
+import { ErrorResponse, MealSummary, MealNameDTO } from "@/Types/types";
 import { NextResponse, NextRequest } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
 
@@ -36,8 +36,8 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
             return NextResponse.json(errorData, { status: errorData.status });
         }
         console.log("----- API ROUTE GET A MEAL SUCCESS -----");
-        const data: Meal[] = await res.json();
-        console.log("Fetched meals:", data[0].mealName.name);
+        const data: MealSummary[] = await res.json();
+        console.log("Fetched meals:", data[0].name);
         return NextResponse.json(data);
 
     } catch (error) {
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
 }
 
 export async function POST(req: NextRequest) {
-    const body: MealName = await req.json();
+    const body: MealNameDTO = await req.json();
     console.log("---------- API ROUTE POST A MEAL ----------");
     // Add new meal
 }

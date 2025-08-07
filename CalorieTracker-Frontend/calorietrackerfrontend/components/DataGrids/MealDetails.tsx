@@ -3,7 +3,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {Meal, MealSummary, ErrorResponse} from '@/Types/types';
+import {MealDTO, MealSummary, ErrorResponse} from '@/Types/types';
 import {helper} from "@/HelperFunctions/helper";
 import {fetchGet} from "@/Fetch/fetchGet";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,19 +11,19 @@ import {useQuery} from "@tanstack/react-query";
 
 
 export function MealDetails(params: {id: number}) {
-    const { data: meal, error, isLoading: isLoadingMeal, refetch: refetchMeal } = useQuery<Meal[], ErrorResponse>({
-        queryKey: ["Meal"],
-        queryFn: async () => fetchGet<Meal[]>(`/api/Meals/${params.id}`), 
+    const { data: mealDetails, error, isLoading: isLoadingMeal, refetch: refetchMeal } = useQuery<MealDTO[], ErrorResponse>({
+        queryKey: ["MealDetails"],
+        queryFn: async () => fetchGet<MealDTO[]>(`/api/Meals/${params.id}`), 
         retry: 0,
         staleTime: 5 * 60 * 1000 // 5 minutes before refetching data
     });
     if (isLoadingMeal) {
         return <div>Loading details...</div>
     }
-    if (!meal) {
+    if (!mealDetails) {
         return <div>No Meals</div>
     }
-    const foods = helper.buildFoodList(meal);
+    const foods = helper.buildFoodList(mealDetails);
 
 
     const columns: GridColDef[] = [

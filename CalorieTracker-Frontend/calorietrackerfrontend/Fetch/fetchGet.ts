@@ -1,7 +1,9 @@
-
 import { ErrorResponse } from "@/Types/types";
+import {useAuthStore} from "@/components/Zustand/AuthStore";
+
 
 export async function fetchGet<T>(url: string): Promise<T> {
+
     console.log(`----- FETCH GET FUNCTION -----`);
     console.log(url);
     try {
@@ -12,18 +14,17 @@ export async function fetchGet<T>(url: string): Promise<T> {
         if (!res.ok) {
             console.log("------ FETCH GET NOT OK -----"); 
             const errorData: ErrorResponse = await res.json();
-            console.log(errorData.message);
-            console.log(errorData.type);
             if (errorData.type === "Authorization") {
                 alert("Access only for users");
-                window.location.href = "Auth/Login";
+                useAuthStore.getState().checkTokenStatus();
+                window.location.href = errorData.redirect || "Auth/Login"; // Redirect to login if specified in error response
             }
             throw (errorData);
         }
         const data: T = await res.json();
         return data;
     } catch (error) {
-        console.error("Fetch GET request failed:", error);
+        
         const errorResponse: ErrorResponse = {
             message: { error: ["Network error occurred while fetching data"] },
             type: "NetworkError",

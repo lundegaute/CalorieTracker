@@ -1,4 +1,4 @@
-import { ErrorResponse, LoginUserDTO, LoginResponse } from '@/Types/types';
+import { ErrorResponse, LoginUserDTO } from '@/Types/types';
 import { API_ENDPOINTS } from '@/lib/constants';
 
 export async function FetchLoginPost(body: LoginUserDTO): Promise<string | ErrorResponse> {

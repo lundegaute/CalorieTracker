@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/Theme/themeProvider";
 import QueryProvider from "@/components/Tanstack/tanstackProvider";
-import { useAuthStore } from "@/components/Zustand/AuthStore";
+import CheckAuthStatus from "@/components/Zustand/AuthStore/checkAuthStatus";
 
 
 const lato = Lato({ subsets: ["latin"], weight: ["400", "700", "900"] });
@@ -27,6 +27,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <QueryProvider>
+            <CheckAuthStatus />
             <Header />
             {children}
             <Footer />

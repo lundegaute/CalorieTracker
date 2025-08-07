@@ -1,6 +1,5 @@
 
 using System.ComponentModel.DataAnnotations;
-using CalorieTracker.Models;
 
 namespace CalorieTracker.DTO
 {
@@ -34,5 +33,4 @@ namespace CalorieTracker.DTO
         public ResponseMealNameDTO MealName { get; set; }
         public ResponseFoodDTO Food { get; set; }
     }
-
 }

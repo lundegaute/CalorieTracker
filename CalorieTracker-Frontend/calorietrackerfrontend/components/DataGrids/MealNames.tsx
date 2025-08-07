@@ -3,7 +3,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {Meal, MealSummary, ErrorResponse} from '@/Types/types';
+import {MealSummary, ErrorResponse} from '@/Types/types';
 import {helper} from "@/HelperFunctions/helper";
 import { useQuery } from '@tanstack/react-query';
 import {fetchGet} from "@/Fetch/fetchGet";
@@ -13,9 +13,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function MealGrid() {
   
-  const { data: meals, error, isLoading: isLoadingMeals, refetch: refetchMeals } = useQuery<Meal[], ErrorResponse>({
+  const { data: mealsSummary, error, isLoading: isLoadingMeals, refetch: refetchMeals } = useQuery<MealSummary[], ErrorResponse>({
     queryKey: ["MealsSummary"],
-    queryFn: async () => fetchGet<Meal[]>("/api/Meals"), 
+    queryFn: async () => fetchGet<MealSummary[]>("/api/Meals"), 
     retry: 0,
   })
 
@@ -26,25 +26,22 @@ export default function MealGrid() {
   if (error) {
     return <div>Error loading meals: {error.message.error[0]}</div>;
   }
-  if (!meals) {
+  if (!mealsSummary) {
     return <>No meals data available</>;
   }
 
-  const mealMap = helper.buildMealSummery(meals); // Map is equivalent to C# Dictionary
-  const mealSummary: MealSummary[] = Array.from(mealMap.values()); // Convert the map to an array for DataGrid
-  
   const columns: GridColDef[] = [
-      { field: "mealNameId", headerName: "ID", width: 90 },
-      { field: 'mealName', headerName: 'Name', width: 150 },
+      { field: "id", headerName: "ID", width: 90 },
+      { field: 'name', headerName: 'Name', width: 150 },
       { field: 'totalCalories', headerName: 'Calories', type: 'number', width: 120 },
       { field: 'totalProtein', headerName: 'Protein', type: 'number', width: 120 },
-      { field: 'totalCarbohydrates', headerName: 'Carbohydrates', type: 'number', width: 200 },
+      { field: 'totalCarbohydrate', headerName: 'Carbohydrates', type: 'number', width: 200 },
       { field: 'totalFat', headerName: 'Fat', type: 'number', width: 110 },
       { 
           field: 'Details', headerName: 'Details', type: 'actions', width: 120, 
           renderCell: (params) => (
               <strong>
-                  <Button variant="contained" color="primary" href={`/Meals/${params.row.mealNameId}`}>
+                  <Button variant="contained" color="primary" href={`/Meals/${params.row.id}`}>
                       Details
                   </Button>
               </strong>
@@ -54,7 +51,7 @@ export default function MealGrid() {
           field: 'Delete', headerName: 'Delete', type: 'actions', width: 120, 
           renderCell: (params) => (
               <strong>
-                  <Button variant="outlined" color="error" onClick={() => alert(`Delete for ${params.row.mealNameId}`)}>
+                  <Button variant="outlined" color="error" onClick={() => alert(`Delete for ${params.row.id}`)}>
                       <DeleteIcon />
                   </Button>
               </strong>
@@ -70,9 +67,9 @@ export default function MealGrid() {
         </Button>
       </Box>
       <DataGrid
-        rows={mealSummary}
+        rows={mealsSummary}
         columns={columns}
-        getRowId={(row) => row.mealNameId} // DataGrid requires a id for each row, the field name should be "id", but i have mealNameId, so i need this line
+        getRowId={(row) => row.id} // DataGrid requires a id for each row, the field name should be "id", but i have mealNameId, so i need this line
         initialState={{
           pagination: {
             paginationModel: {
