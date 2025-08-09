@@ -70,7 +70,9 @@ export default function Home() {
       <section className="max-w-4xl mx-auto mt-24">
         <h3 className="text-2xl font-semibold mb-4">About</h3>
         <p className="text-slate-300 text-sm leading-relaxed">
-          Built with Next.js, TypeScript, Tailwind, and focused on clean UX for consistent tracking.
+          Frontend built with Next.js, TypeScript, Tailwind, and focused on clean UX for consistent tracking.
+          Backend powered by .NET 9 Web API, using Entity Framework Core with MongoDB to store all food data from <a className="text-emerald-300 hover:underline" href="https://www.matvaretabellen.no/api" target="_blank" rel="noopener">https://www.matvaretabellen.no/api</a>.
+          And MySql for user data.
         </p>
       </section>
     </>

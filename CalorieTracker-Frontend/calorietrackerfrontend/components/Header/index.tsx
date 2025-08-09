@@ -17,7 +17,6 @@ function Header() {
                  shadow-[0_2px_8px_-2px_rgba(0,0,0,0.5)]">
             <div className="flex items-center">
                 <Link href="/" className="hover:text-emerald-300 transition-colors text-2xl font-bold">Calorie Tracker</Link>
-                <ThemeSwitch />
             </div>
             <nav className="mt-2 flex items-center">
                 <ul className="flex space-x-4">

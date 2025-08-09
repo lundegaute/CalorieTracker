@@ -1,3 +1,4 @@
+"use client";
 import {MealNameDTO, ErrorResponse, AddMealNameDTO} from "@/Types/types";
 import Button from "@mui/material/Button";
 import sweetAlertInput from "@/components/SweetAlert/formInput";
