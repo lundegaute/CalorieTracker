@@ -1,10 +1,9 @@
-import { ErrorResponse, MealSummary, MealNameDTO } from "@/Types/types";
+import { ErrorResponse, MealNameDTO, MealFoods } from "@/Types/types";
 import { NextResponse, NextRequest } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
 
 export async function GET(req: NextRequest, {params}: { params: { id: string } }) {
     console.log("---------- API ROUTE GET A MEAL ----------");
-    console.log("Meal ID from params:", params.id);
     console.log(`${API_ENDPOINTS.MEAL}/${params.id}`);
 
     const token = req.cookies.get("token")?.value;
@@ -36,8 +35,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
             return NextResponse.json(errorData, { status: errorData.status });
         }
         console.log("----- API ROUTE GET A MEAL SUCCESS -----");
-        const data: MealSummary[] = await res.json();
-        console.log("Fetched meals:", data[0].name);
+        const data: MealFoods[] = await res.json();
         return NextResponse.json(data);
 
     } catch (error) {

@@ -10,18 +10,22 @@ function Header() {
     const {isAuthenticated} = useAuthStore();
 
     return (
-        <header className="bg-gray-800 text-white p-5 flex justify-between">
+        <header className="w-full px-8 py-5 flex items-center justify-between 
+                 sticky top-0 z-40 w-full border-b border-white/10
+                 bg-gradient-to-r from-slate-950/70 via-slate-900/60 to-emerald-900/50
+                 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60
+                 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.5)]">
             <div className="flex items-center">
-                <Link href="/" className="hover:underline text-2xl font-bold">Calorie Tracker</Link>
+                <Link href="/" className="hover:text-emerald-300 transition-colors text-2xl font-bold">Calorie Tracker</Link>
                 <ThemeSwitch />
             </div>
             <nav className="mt-2 flex items-center">
                 <ul className="flex space-x-4">
                     <li>
-                        <Link href="/" className="hover:underline">Home</Link>
+                        <Link href="/" className="hover:text-emerald-300 transition-colors">Home</Link>
                     </li>
                     <li>
-                        <Link href="/Meals" className="hover:underline">Meals</Link>
+                        <Link href="/Meals" className="hover:text-emerald-300 transition-colors">Meals</Link>
                     </li> 
                     {isAuthenticated ? (
                         <li>

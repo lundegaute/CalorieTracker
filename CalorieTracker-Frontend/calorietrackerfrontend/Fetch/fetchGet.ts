@@ -17,7 +17,7 @@ export async function fetchGet<T>(url: string): Promise<T> {
             if (errorData.type === "Authorization") {
                 alert("Access only for users");
                 useAuthStore.getState().checkTokenStatus();
-                window.location.href = errorData.redirect || "Auth/Login"; // Redirect to login if specified in error response
+                window.location.href = errorData.redirect || "/Auth/Login"; // Redirect to login if specified in error response
             }
             throw (errorData);
         }

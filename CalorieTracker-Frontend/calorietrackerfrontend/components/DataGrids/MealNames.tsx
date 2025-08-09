@@ -8,6 +8,7 @@ import {helper} from "@/HelperFunctions/helper";
 import { useQuery } from '@tanstack/react-query';
 import {fetchGet} from "@/Fetch/fetchGet";
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddMealName from "@/components/MealName/AddMealName";
 
 
 
@@ -62,9 +63,7 @@ export default function MealGrid() {
   return (
     <Box sx={{ height: 400, width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-        <Button variant="contained" color="success"  href="/Meals/Add">
-          Add Meal
-        </Button>
+        <AddMealName />
       </Box>
       <DataGrid
         rows={mealsSummary}

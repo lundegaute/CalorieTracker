@@ -24,12 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} "min-h-screen text-slate-100 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-800 selection:bg-emerald-400/30 selection:text-white"`}>
         <ThemeProvider>
           <QueryProvider>
             <CheckAuthStatus />
             <Header />
-            {children}
+            <main className="px-8 pb-24">
+              {children}
+            </main>
             <Footer />
           </QueryProvider>
         </ThemeProvider>

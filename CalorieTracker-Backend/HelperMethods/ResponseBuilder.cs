@@ -54,6 +54,21 @@ namespace CalorieTracker.HelperMethods
             }));
             return mealResponse;
         }
+        public static List<MealDetailsDTO> MealDetails(IEnumerable<Meal> meals)
+        {
+            List<MealDetailsDTO> mealDetailsDTO = new List<MealDetailsDTO>();
+            mealDetailsDTO.AddRange(meals.Select(m => new MealDetailsDTO
+            {
+                MealId = m.Id,
+                Quantity = m.Quantity,
+                FoodName = m.Food.Name,
+                Calories = m.Food.Calories * (m.Quantity / 100d),
+                Protein = m.Food.Protein * (m.Quantity / 100d),
+                Carbohydrates = m.Food.Carbohydrates * (m.Quantity / 100d),
+                Fat = m.Food.Fat * (m.Quantity / 100d),
+            }));
+            return mealDetailsDTO;
+        }
         public static List<MealSummaryDTO> MealSummary(IEnumerable<MealName> mealNames, IEnumerable<Meal> meals)
         {
             List<MealSummaryDTO> mealSummaryDTO = new List<MealSummaryDTO>();

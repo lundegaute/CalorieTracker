@@ -4,9 +4,9 @@ import { useEffect } from "react";
 
 function CheckAuthStatus() {
     const checkTokenStatus = useAuthStore(state => state.checkTokenStatus);
-    console.log(`isAuthenticated status: ${useAuthStore.getState().isAuthenticated}`)
     useEffect(() => {
         checkTokenStatus();
+        console.log(`isAuthenticated status: ${useAuthStore.getState().isAuthenticated}`)
     },[checkTokenStatus])
 
     return null;

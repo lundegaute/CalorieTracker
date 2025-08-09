@@ -1,3 +1,4 @@
+"use client";
 import {create} from 'zustand';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS } from '@/lib/constants';
@@ -34,17 +35,14 @@ export const useAuthStore = create<AuthState>()(
                 });
             },
             checkTokenStatus: async () => {
-                const token = Cookies.get("token");
-                if ( !token ) {
-                    set({ isAuthenticated: false});
-                    return;
-                }
-                const validation = ValidateToken(token);
-                if ( !validation.isValid) {
-                    console.log("----- INSIDE ZUSTAND AUTHSTORE TOKEN NOT VALID -----");
-                    set({ isAuthenticated: false});
-                } else {
-                    set({ isAuthenticated: true});
+                try {
+                    const res = await fetch("/api/Auth/Status", {
+                        method: "GET",
+                        credentials: "include"
+                    })
+                    set({ isAuthenticated: res.ok })
+                } catch {
+                    set({ isAuthenticated: false })
                 }
             }
         }),

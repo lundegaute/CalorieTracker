@@ -8,10 +8,10 @@ function LoggedOut() {
             <nav className="">
                 <ul className="flex space-x-4">    
                     <li>
-                        <Link href="/Auth/Login" className="hover:underline">Login</Link>
+                        <Link href="/Auth/Login" className="hover:text-emerald-300 transition-colors">Login</Link>
                     </li>
                     <li>
-                        <Link href="/Auth/Register" className="hover:underline">Register</Link>
+                        <Link href="/Auth/Register" className="hover:text-emerald-300 transition-colors">Register</Link>
                     </li>
                 </ul>
             </nav>

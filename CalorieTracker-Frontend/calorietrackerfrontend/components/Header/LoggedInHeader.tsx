@@ -16,7 +16,7 @@ function LoggedIn() {
         <nav>
             <ul className="">    
                 <li>
-                    <Link href={"/"} className="hover:underline" onClick={handleLogout}>Logout</Link>
+                    <Link href={"/"} className="hover:text-emerald-300 transition-colors" onClick={handleLogout}>Logout</Link>
                 </li>
             </ul>    
         </nav> 

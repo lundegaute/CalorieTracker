@@ -8,6 +8,9 @@ export type Food = {
     fat: number;
 }
 
+export type AddMealNameDTO = {
+    name: string;
+}
 export type MealNameDTO = {
     id: number;
     name: string;
@@ -27,7 +30,7 @@ export type MealSummary = {
     totalCarbohydrates: number | null;
     totalFat: number | null;
 }
-export type MealFood = {
+export type MealFoods = {
     mealId: number;
     quantity: number;
     foodName: string;
