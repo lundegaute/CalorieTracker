@@ -1,6 +1,7 @@
 import { ErrorResponse } from "@/Types/types";
 
-export async function fetchPost<T, bodyType>(url: string, body: bodyType): Promise<T | ErrorResponse> {
+export async function fetchPost<T, bodyType>(url: string, body: bodyType)
+    : Promise<{success: true, data: T} | {success: false, error: ErrorResponse}> {
     console.log("----- FETCHPOST -----");
     console.log(url);
     const res = await fetch(url, {
@@ -11,29 +12,15 @@ export async function fetchPost<T, bodyType>(url: string, body: bodyType): Promi
         body: JSON.stringify(body),
         credentials: "include",
     });
-    try {
-        if ( !res.ok) {
-            const errorData: ErrorResponse = await res.json();
-            throw (errorData);
-        }
-
-        // If res is ok: return data
-        const data: T = await res.json();
-        return data;
-
-    } catch {
-        const errorResponse: ErrorResponse = {
-            message: { error: ["Network error occurred while fetching data"] },
-            type: "NetworkError",
-            title: "Fetch Error",
-            status: 500
-        };
-        throw (errorResponse);
+    if ( !res.ok) {
+        const error: ErrorResponse = await res.json();
+        return {success: false, error};
     }
-    
 
-
-
+    // If res is ok: return data
+    const data: T = await res.json();
+    return {success: true, data: data};
 
 }
+    
     

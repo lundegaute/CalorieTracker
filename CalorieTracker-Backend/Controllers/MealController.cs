@@ -105,7 +105,7 @@ namespace CalorieTracker.Controller
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var createdMeal = await _mealService.AddMealToUser(int.Parse(userID!), addMealDTO);
-                return CreatedAtAction(nameof(GetMealForUser), new { id = createdMeal.Id }, createdMeal);
+                return CreatedAtAction(nameof(GetMealForUser), new { mealNameId = createdMeal.Id }, createdMeal);
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -180,17 +180,17 @@ namespace CalorieTracker.Controller
             }
             catch (ArgumentOutOfRangeException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal delete", 400);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error deleting food item", 400);
                 return BadRequest(response);
             }
             catch (KeyNotFoundException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal delete", 404);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error error deleting food item", 404);
                 return BadRequest(response);
             }
             catch (HttpRequestException)
             {
-                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error during Meal delete", 500);
+                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error error deleting food item", 500);
                 return BadRequest(response);
             }
         }

@@ -1,57 +1,61 @@
 import jwt from 'jsonwebtoken';
-import {DecodedToken} from "@/Types/types";
+import { DecodedToken, ErrorResponse } from "@/Types/types";
 
-function validateToken(token: string): { isValid: boolean; isExpired: boolean; timeUntilExpiry?: number; error?: string; } {
+function response(message: string, type: string, title: string, status: number, redirect: string) {
+    return {
+        message: { Error: [message] },
+        type,
+        title,
+        status,
+        redirect
+    };
+}
+
+function validateToken(token: string) {
     if (!token) {
         console.log("Token not found");
-        return {
-            isValid: false,
-            isExpired: false,
-            error: "Token not provided"
-        };
+        return response("Token not found", "Authorization", "Token not found", 401, "/Auth/Login");
     }
+
     try {
-        const decoded = jwt.decode(token) as DecodedToken;
+        // Use verify instead of decode to ensure signature & exp are checked
+        const secret = process.env.NEXT_PUBLIC_JWT_SECRET || process.env.JWT_SECRET;
+        let decoded: DecodedToken | null;
+
+        if (secret) {
+            decoded = jwt.verify(token, secret) as DecodedToken; // throws on invalid or expired
+        } else {
+            // Fallback (NOT secure) if secret missing
+            decoded = jwt.decode(token) as DecodedToken | null;
+        }
 
         if (!decoded) {
             console.log("Failed to decode token");
-            return {
-                isValid: false,
-                isExpired: false,
-                error: "Invalid token format"
-            };
+            return response("Invalid token format", "Authorization", "Invalid Token format", 401, "/Auth/Login");
         }
+
         if (!decoded.exp) {
-            console.log("Token missing expiration claim");
-            return {
-                isValid: false,
-                isExpired: false,
-                error: "Token missing expiration"
-            };
+            console.log("Token missing exp");
+            return response("Token missing exp claim", "Authorization", "Expiration error", 401, "/Auth/Login");
         }
 
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-        const isExpired = decoded.exp < currentTime;
-        const timeUntilExpiry = decoded.exp - currentTime; // Time until expiry in seconds
-        
-        console.log(`Current time: ${currentTime}`);
-        console.log(`Token expires at: ${decoded.exp}`);
-        console.log(`Time until expiry: ${timeUntilExpiry} seconds`);
-        console.log(`Token expired: ${isExpired}`);
+        const now = Math.floor(Date.now() / 1000);
+        if (decoded.exp <= now) {
+            return response("Token has expired", "Authorization", "Token expired", 401, "/Auth/Login");
+        }
 
-        return {
-            isValid: !isExpired,
-            isExpired,
-            timeUntilExpiry: timeUntilExpiry > 0 ? timeUntilExpiry : 0,
-            error: isExpired ? "Token has expired" : undefined
-        };
-    } catch (error) {
-        console.error("Error validating token:", error);
-        return {
-            isValid: false,
-            isExpired: false,
-            error: "Error validating token"
-        };
+        // SUCCESS case (add whatever you need)
+        return response("Token is valid", "Authorize", "Token is valid", 200, "");
+
+    } catch (err: any) {
+        if (err?.name === "TokenExpiredError") {
+            return response("Token has expired", "Authorization", "Token expired", 401, "/Auth/Login");
+        }
+        if (err?.name === "JsonWebTokenError") {
+            return response("Invalid token", "Authorization", "Token invalid", 401, "/Auth/Login");
+        }
+        console.error("Error validating token:", err);
+        return response("Error validating token", "Authorization", "Validation error", 500, "/Auth/Login");
     }
 }
 

@@ -5,6 +5,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { MealFoods, ErrorResponse } from "@/Types/types";
 import { fetchGet } from "@/Fetch/fetchGet";
+import { fetchDelete } from "@/Fetch/fetchDelete";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/material";
@@ -14,7 +15,7 @@ interface MealDetailsProps {
 }
 
 export function MealDetails({ id }: MealDetailsProps) {
-  const { data, error, isLoading } = useQuery<MealFoods[], ErrorResponse>({
+  const { data, error, isLoading, refetch: refetchMeal } = useQuery<MealFoods[], ErrorResponse>({
     queryKey: ["MealDetails", id],
     queryFn: async () => fetchGet<MealFoods[]>(`/api/Meals/${id}`),
     retry: 0,
@@ -27,7 +28,7 @@ export function MealDetails({ id }: MealDetailsProps) {
   const columns: GridColDef[] = [
     { field: "mealId", headerName: "ID", width: 50},
     { field: "foodName", headerName: "Food", width: 150 },
-    { field: "quantity", headerName: "Qty", type: "number", width: 70 },
+    { field: "quantity", headerName: "Qty", type: "number", editable: true, width: 70 },
     { field: "calories", headerName: "Kcal", type: "number", width: 70 },
     { field: "protein", headerName: "Prot", type: "number", width: 70 },
     { field: "carbohydrates", headerName: "Carbs", type: "number", width: 70 },
@@ -42,7 +43,7 @@ export function MealDetails({ id }: MealDetailsProps) {
         <IconButton
           size="small"
           color="error"
-          onClick={() => alert(`Delete item ${params.row.mealId}`)}
+          onClick={() => fetchDelete(`/api/Meals`, params.row.mealId).then(() => refetchMeal())}
         >
           <DeleteIcon fontSize="inherit" />
         </IconButton>
@@ -77,7 +78,7 @@ export function MealDetails({ id }: MealDetailsProps) {
         density="compact"
         columnVisibilityModel={{mealId: false}}
         initialState={{
-          pagination: { paginationModel: { pageSize: 25 } }
+          pagination: { paginationModel: { pageSize: 10 } }
         }}
         pageSizeOptions={[10, 25, 50]}
         sx={{

@@ -14,6 +14,7 @@ export async function fetchGet<T>(url: string): Promise<T> {
         if (!res.ok) {
             console.log("------ FETCH GET NOT OK -----"); 
             const errorData: ErrorResponse = await res.json();
+            console.log(errorData.title);
             if (errorData.type === "Authorization") {
                 alert("Access only for users");
                 useAuthStore.getState().checkTokenStatus();
@@ -24,9 +25,8 @@ export async function fetchGet<T>(url: string): Promise<T> {
         const data: T = await res.json();
         return data;
     } catch (error) {
-        
         const errorResponse: ErrorResponse = {
-            message: { error: ["Network error occurred while fetching data"] },
+            message: { Error: ["Network error occurred while fetching data"] },
             type: "NetworkError",
             title: "Fetch Error",
             status: 500

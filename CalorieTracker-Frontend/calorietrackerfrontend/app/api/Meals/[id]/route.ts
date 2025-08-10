@@ -4,14 +4,14 @@ import { API_ENDPOINTS } from "@/lib/constants";
 
 export async function GET(req: NextRequest, {params}: { params: { id: string } }) {
     console.log("---------- API ROUTE GET A MEAL ----------");
-    console.log(`${API_ENDPOINTS.MEAL}/${params.id}`);
+    console.log(`${API_ENDPOINTS.MEAL}/${encodeURIComponent(params.id)}`);
 
     const token = req.cookies.get("token")?.value;
     if ( !token ) {
         console.log("No token found in cookies");
         const errorResponse: ErrorResponse = {
             message: {
-                error: ["Unauthorized access. No token provided."],
+                Error: ["Unauthorized access. No token provided."],
             },
             type: "Authorization",
             title: "No Token",
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
         return NextResponse.json(errorResponse, {status: errorResponse.status});
     }
     try {
-        const  res = await fetch(`${API_ENDPOINTS.MEAL}/${params.id}`, {
+        const  res = await fetch(`${API_ENDPOINTS.MEAL}/${encodeURIComponent(params.id)}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json", // Not strictly necessary for GET, but good practice
@@ -42,13 +42,13 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
         console.log("----- API ROUTE GET A MEAL ERROR -----");
         const errorResponse: ErrorResponse = {
             message: {
-                error: ["An error occurred while fetching a meal from the backend"],
+                Error: ["An error occurred while fetching a meal from the backend"],
             },
             type: "Error",
             title: "Fetch Error",
             status: 500
         }
-        console.log(`ErrorResponse: ${errorResponse.message.error[0]}`);
+        console.log(`ErrorResponse: ${errorResponse.message.Error[0]}`);
         return NextResponse.json(errorResponse, { status: errorResponse.status });
     }
 }
@@ -58,4 +58,43 @@ export async function POST(req: NextRequest) {
     console.log("---------- API ROUTE POST A MEAL ----------");
     // Add new meal
 }
+
+export async function DELETE(req: NextRequest, {params}: {params: {id: string}}) {
+    console.log("----- API ROUTE DELETE FOOD ITEM -----");
+    const token = req.cookies.get("token")?.value;
+    try {
+        const res = await fetch(`${API_ENDPOINTS.MEAL}/${(encodeURIComponent(params.id))}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "Application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        if ( !res.ok ) {
+            const errorData: ErrorResponse = await res.json();
+            return NextResponse.json(
+                errorData,
+                {status: errorData.status}
+            )
+        }
+        const message: string = await res.json();
+        return NextResponse.json(
+            message,
+            { status: 200}
+        );
+    } catch (error) {
+        console.log("----- API ROUTE DELETE FOOD ITEM ERROR -----");
+        console.log(error);
+        return NextResponse.json(
+            {message: {
+                Error: ["Server error in API ROUTE"]
+            },
+            type: "Server error",
+            title: "API ROUTE ERROR",
+            status: 500
+            },
+            {status: 500}
+        );
+    };
+};
 

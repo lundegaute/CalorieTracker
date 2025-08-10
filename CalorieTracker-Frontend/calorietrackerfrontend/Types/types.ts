@@ -41,7 +41,7 @@ export type MealFoods = {
 }
 
 export type Error = {
-    error: string[];
+    Error: string[];
 }
 
 export type ErrorResponse = {

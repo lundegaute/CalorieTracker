@@ -7,6 +7,7 @@ import {MealSummary, ErrorResponse} from '@/Types/types';
 import {helper} from "@/HelperFunctions/helper";
 import { useQuery } from '@tanstack/react-query';
 import {fetchGet} from "@/Fetch/fetchGet";
+import {fetchDelete} from "@/Fetch/fetchDelete";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddMealName from "@/components/MealName/AddMealName";
 
@@ -25,7 +26,7 @@ export default function MealGrid() {
     return <div>Loading meals...</div>;
   }
   if (error) {
-    return <div>Error loading meals: {error.message.error[0]}</div>;
+    return <div>Error loading meals: {error.message.Error[0]}</div>;
   }
   if (!mealsSummary) {
     return <>No meals data available</>;
@@ -52,7 +53,7 @@ export default function MealGrid() {
           field: 'Delete', headerName: 'Delete', type: 'actions', width: 100, 
           renderCell: (params) => (
               <strong>
-                  <Button variant="outlined" color="error" onClick={() => alert(`Delete for ${params.row.id}`)}>
+                  <Button variant="outlined" color="error" onClick={() => fetchDelete(`/api/MealName/`, params.row.id).then(() => refetchMeals())}>
                       <DeleteIcon />
                   </Button>
               </strong>
@@ -69,8 +70,9 @@ export default function MealGrid() {
     disableRowSelectionOnClick
     columnVisibilityModel={{ id: false }}
     initialState={{
-      pagination: { paginationModel: { pageSize: 10 } },
+      pagination: { paginationModel: { pageSize: 5 } },
     }}
+    pageSizeOptions={[5, 10, 20]}
     sx={{
       fontSize: 15,
       // Remove its own panel look so it inherits parent card aesthetics

@@ -3,7 +3,6 @@ import { API_ENDPOINTS } from "@/lib/constants";
 import {MealNameDTO, ErrorResponse} from "@/Types/types";
 
 
-
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const token = req.cookies.get("token")?.value;
@@ -19,14 +18,12 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify(body)
         })
         if ( !res.ok) {
+            console.log("----- API ADD MEALNAME RES NOT OK -----");
             const errorData: ErrorResponse = await res.json();
+            console.log(errorData);
             return NextResponse.json(
-                {
-                    errorData
-                },
-                {
-                    status: errorData.status
-                }
+                errorData,
+                { status: errorData.status }
             )
         }
         console.log("----- API ROUTE ADD MEALNAME SUCCESS -----");
@@ -44,7 +41,7 @@ export async function POST(req: NextRequest) {
         console.log(error);
         const errorResponse: ErrorResponse = {
             message: {
-                error: ["Server error trying to add new MealName"]
+                Error: ["Server error trying to add new MealName"]
             },
             type: "Server Error",
             title: "Server error",

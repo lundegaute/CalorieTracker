@@ -4,6 +4,7 @@ using CalorieTracker.Models;
 using CalorieTracker.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using CalorieTracker.HelperMethods;
 
 namespace CalorieTracker.Controllers
 {
@@ -30,10 +31,14 @@ namespace CalorieTracker.Controllers
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Find the user from token
-                var mealNames = await _mealNameService.GetMealNames(int.Parse(userID));
+                var mealNames = await _mealNameService.GetMealNames(int.Parse(userID!));
                 return Ok(mealNames);
             }
-            catch (HttpRequestException) { return StatusCode(500, "Server Error when fetching data from MealNames"); }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Backend server error on getting meal names", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -52,9 +57,21 @@ namespace CalorieTracker.Controllers
                 var mealName = await _mealNameService.GetMealName(id, int.Parse(userID));
                 return Ok(mealName);
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); }
-            catch (HttpRequestException) { return StatusCode(500, "Server Error"); }
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal delete", 400);
+                return BadRequest(response);
+            }
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal delete", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(ArgumentOutOfRangeException).Name, "Backend server error on getting meal name", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -75,10 +92,26 @@ namespace CalorieTracker.Controllers
                 var newMealName = await _mealNameService.AddMealName(mealNameDTO, int.Parse(userID));
                 return CreatedAtAction(nameof(GetMealName), new { id = newMealName.Id }, newMealName);
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); } // If the id is 0 or negative
-            catch (ArgumentException e) { return BadRequest(new { message = e.Message }); } // If the mealName already exists
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); } // If UserID has no match in the database
-            catch (HttpRequestException) { return StatusCode(500, "Server Error when adding MealName"); } // If the server fails to add the MealName
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error adding new meal name", 400);
+                return BadRequest(response);
+            } // If the id is 0 or negative
+            catch (ArgumentException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error adding new meal name", 400);
+                return BadRequest(response);
+            } // If the mealName already exists
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error adding new meal name", 400);
+                return BadRequest(response);
+            } // If UserID has no match in the database
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Backend server error when adding meal name", 500);
+                return BadRequest(response);
+            } // If the server fails to add the MealName
         }
 
         /// <summary>
@@ -99,10 +132,26 @@ namespace CalorieTracker.Controllers
 
                 return Ok("Meal Name updated successfully");
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); } // If the id is 0 or negative
-            catch (ArgumentException e) { return BadRequest(new { message = e.Message }); } // If mealName already exists
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); } // Is userID has no match in database
-            catch (HttpRequestException) { return StatusCode(500, "Server error when updating mealName"); }
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error updating meal name", 400);
+                return BadRequest(response);
+            } // If the id is 0 or negative
+            catch (ArgumentException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error updating meal name", 400);
+                return BadRequest(response);
+            } // If mealName already exists
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error updating meal name", 400);
+                return BadRequest(response);
+            } // Is userID has no match in database
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Backend server error when updating", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -118,12 +167,24 @@ namespace CalorieTracker.Controllers
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Find the user from token
-                await _mealNameService.DeleteMealName(id, int.Parse(userID));
-                return Ok("Meal Name deleted successfully");
+                await _mealNameService.DeleteMealName(id, int.Parse(userID!));
+                return NoContent();
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); } // If the id is 0 or negative
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); } // If MealName not found with current ID
-            catch (HttpRequestException) { return StatusCode(500, "Server error when deleting MealName"); }
+            catch (ArgumentOutOfRangeException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal delete", 400);
+                return BadRequest(response);
+            } // If the id is 0 or negative
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal delete", 400);
+                return BadRequest(response);
+            } // If MealName not found with current ID
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Backend server error when deleting", 500);
+                return BadRequest(response);
+            }
         }
     }
 }
