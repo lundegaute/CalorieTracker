@@ -93,7 +93,7 @@ namespace CalorieTracker.Controller
         }
 
         /// <summary>
-        /// Add a new meal for the logged in user
+        /// Add a food item to a meal, for the logged in user
         /// </summary>
         /// <response code="201">Returns the created meal</response>
         /// <response code="400">If the meal data is invalid or user ID is not found</response>

@@ -8,6 +8,14 @@ export type Food = {
     fat: number;
 }
 
+export type AddFoodDTO = {
+    name: string,
+    calories: number,
+    protein: number,
+    carbohydrates: number,
+    fat: number,
+}
+
 export type AddMealNameDTO = {
     name: string;
 }

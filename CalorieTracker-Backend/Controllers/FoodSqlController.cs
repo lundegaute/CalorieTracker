@@ -1,11 +1,13 @@
 using CalorieTracker.DTO;
 using CalorieTracker.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalorieTracker.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FoodSqlController : ControllerBase
     {
         private readonly FoodSqlService _foodSqlService;

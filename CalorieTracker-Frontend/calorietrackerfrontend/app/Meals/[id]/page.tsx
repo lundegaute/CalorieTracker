@@ -1,10 +1,9 @@
+
 import { MealDetails } from "@/components/DataGrids/MealDetails";
+import FoodSearchPanel from "@/components/MealDetails/FoodSearchPanel";
 
-interface MealPageProps {
-  params: { id: string };
-}
 
-export default async function Meal({ params }: MealPageProps) {
+export default async function Meal({ params }: {params: { id: string }}) {
   const mealId = Number(params.id);
 
   return (
@@ -30,20 +29,9 @@ export default async function Meal({ params }: MealPageProps) {
         {/* Left Rail: Actions / Add Food */}
         <aside className="space-y-5 order-last xl:order-first">
           <Panel title="Add Food">
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Search and add items from the database to this meal.
-            </p>
-            <div className="mt-3">
-              <PlaceholderButton label="Open Add Food" />
-            </div>
-          </Panel>
-          <Panel title="Quick Macros">
-            <MiniMetric label="Protein" value="— g" color="text-emerald-300" />
-            <MiniMetric label="Carbs" value="— g" color="text-teal-300" />
-            <MiniMetric label="Fat" value="— g" color="text-rose-300" />
+            <FoodSearchPanel />
           </Panel>
         </aside>
-
         {/* Center: Meal Foods Table */}
         <section
           className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-6
@@ -64,12 +52,10 @@ export default async function Meal({ params }: MealPageProps) {
           <Panel title="Macro Split">
             <ChartRingPlaceholder />
           </Panel>
-          <Panel title="Recent Changes">
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li>• Added food entries (soon)</li>
-              <li>• Adjusted quantities (soon)</li>
-              <li>• Deletions log (soon)</li>
-            </ul>
+          <Panel title="Quick Macros">
+            <MiniMetric label="Protein" value="— g" color="text-emerald-300" />
+            <MiniMetric label="Carbs" value="— g" color="text-teal-300" />
+            <MiniMetric label="Fat" value="— g" color="text-rose-300" />
           </Panel>
         </aside>
       </div>

@@ -53,11 +53,13 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
     }
 }
 
+
 export async function POST(req: NextRequest) {
     const body: MealNameDTO = await req.json();
     console.log("---------- API ROUTE POST A MEAL ----------");
     // Add new meal
 }
+
 
 export async function DELETE(req: NextRequest, {params}: {params: {id: string}}) {
     console.log("----- API ROUTE DELETE FOOD ITEM -----");
