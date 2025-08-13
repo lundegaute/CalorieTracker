@@ -1,5 +1,13 @@
 
-export type Food = {
+export type FoodFromMongo = {
+    id: string;
+    name: string;
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    fat: number;
+}
+export type FoodFromSql = {
     id: number;
     name: string;
     calories: number;
@@ -7,6 +15,15 @@ export type Food = {
     carbohydrates: number;
     fat: number;
 }
+export type FoodDTO = {
+    id: number;
+    name: string;
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    fat: number;
+}
+
 
 export type AddFoodDTO = {
     name: string,
@@ -28,7 +45,12 @@ export type MealDTO = {
     id: number;
     quantity: number;
     mealName: MealNameDTO;
-    food: Food;
+    food: FoodDTO;
+}
+export type AddMealDTO = {
+    quantity: number;
+    mealNameId: number;
+    foodId: number;
 }
 export type MealSummary = {
     id: number

@@ -21,7 +21,7 @@ namespace CalorieTracker.Controllers
         }
 
         /// <summary>
-        /// Gets all foods from the MongoDB database.
+        /// Gets all foods from the MongoDB database. (Only simple form: Cals, Prot, Carbs and Fat)
         /// </summary>
         /// <response code="200">Returns a list of foods from mongoDB</response>
         /// <response code="500">If there is an error fetching data from the database</response>
@@ -40,7 +40,7 @@ namespace CalorieTracker.Controllers
         }
 
         /// <summary>
-        /// Searches for a foods that matches the given name in the MongoDB database.
+        /// Searches for a foods that matches the given name in the MongoDB database. (Only simple form: Cals, Prot, Carbs and Fat)
         /// </summary>
         /// <param name="name"></param>
         /// <response code="200">Returns a list of foods that match the name</response>

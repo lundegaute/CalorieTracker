@@ -1,23 +1,84 @@
 "use client";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
+import { FoodFromMongo, ErrorResponse, AddFoodDTO, AddMealDTO, MealDTO, FoodDTO} from "@/Types/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {fetchPost} from "@/Fetch/fetchPost";
+import {fetchGet} from "@/Fetch/fetchGet";
 
+// Ctrl+Shift+F to search for sweetalert2, to see where to add it throughout the project
 
-const mockFoods = [
-  { id: 1, name: "Chicken breast", calories: 165.5, protein: 31, carbohydrates: 0, fat: 3.6 },
-  { id: 2, name: "Rice, cooked", calories: 130, protein: 2.7, carbohydrates: 28, fat: 0.3 },
-  { id: 3, name: "Avocado", calories: 160, protein: 2, carbohydrates: 9, fat: 15 },
-  { id: 4, name: "Broccoli, cooked", calories: 55, protein: 3.7, carbohydrates: 11, fat: 0.6 },
-  { id: 5, name: "Egg, cooked", calories: 72, protein: 6.3, carbohydrates: 0.6, fat: 4.8 },
-];
-
-export default function FoodSearchPanel() {
+export default function FoodSearchPanel({mealId}: {mealId: number}) {
+  const queryClient = useQueryClient();
   const [q, setQ] = useState("");
+  console.log("FoodSearchPanel mealId:", mealId);
+  const { data: foods, isLoading: isLoadingFoods, error, refetch: refetchFoods } = useQuery<FoodFromMongo[], ErrorResponse>({
+    queryKey: ["foodsFromMongo", q],
+    queryFn: async () => {
+      const res = await fetchPost<FoodFromMongo[], string>("/api/Foods/Search", q);
+      if (!res.success) throw res.error;
+      return res.data;
+    },
+    enabled: q.length >= 3, 
+  });
 
-  const results = q.trim()
-    ? mockFoods.filter(f => f.name.toLowerCase().includes(q.toLowerCase()))
-    : [];
+
+  
+
+  async function handleAddFood(food: FoodFromMongo) {
+    console.log(food);
+    const foodToAdd: AddFoodDTO = {
+      name: food.name,
+      calories: food.calories,
+      protein: food.protein,
+      carbohydrates: food.carbohydrates,
+      fat: food.fat,
+    }
+    // Fetch the food based on name
+    try {
+      const res = await fetchGet<FoodDTO>(`/api/Foods/${encodeURIComponent(foodToAdd.name)}`);
+      // If food exists in the database, we go straight to adding food to meal
+      const existingFood = res;
+      const addMealDTO: AddMealDTO = {
+        quantity: 100,
+        mealNameId: mealId,
+        foodId: existingFood.id,
+      };
+      const addFoodToMeal = await fetchPost<MealDTO, AddMealDTO>(`/api/Meals`, addMealDTO);
+      if (!addFoodToMeal.success) {
+        alert(addFoodToMeal.error.message.Error[0]); // sweetalert2: Change this to use sweetalert2
+      } else {
+        queryClient.refetchQueries({ queryKey: ["MealDetails", mealId] });
+      }
+    } catch {
+      console.log("Food does not exist in the database, adding it now.");
+      // If food does not exist, add it to the database first, then add food to meal
+      
+      const addFoodToSql = await fetchPost<FoodDTO, AddFoodDTO>(`/api/Foods`, foodToAdd);
+      console.log("--------------------------------------------")
+      console.log(addFoodToSql.success, addFoodToSql);
+      console.log("--------------------------------------------")
+      if (addFoodToSql.success) {
+        const newlyCreatedFood: FoodDTO = addFoodToSql.data;
+        console.log("Newly created food:", JSON.stringify(newlyCreatedFood)); // How to log the actual object: remember to stringify
+        const addMealDTO: AddMealDTO = {
+          quantity: 100,
+          mealNameId: mealId,
+          foodId: newlyCreatedFood.id,
+        };
+        const addFoodToMeal = await fetchPost<MealDTO, AddMealDTO>(`/api/Meals`, addMealDTO);
+        if (!addFoodToMeal.success) {
+          alert(addFoodToMeal.error.message.Error[0]);
+        } else {
+          queryClient.refetchQueries({ queryKey: ["MealDetails", mealId] });
+        }
+      } else {
+        alert(addFoodToSql.error.message.Error[0]);
+      }
+    }
+  }
+
 
   return (
     <div className="space-y-3">
@@ -31,7 +92,7 @@ export default function FoodSearchPanel() {
       />
 
       <div className="space-y-2 pt-2 max-h-120 overflow-y-auto pr-1">
-        {results.map((f) => (
+        {foods && foods.map((f) => (
           <div
             key={f.id}
             className="rounded-lg border-2 border-emerald-400/40 bg-white/5 p-3"
@@ -42,7 +103,7 @@ export default function FoodSearchPanel() {
               <div>Prot: <span className="font-medium text-slate-100">{f.protein} g</span></div>
               <div>Carbs: <span className="font-medium text-slate-100">{f.carbohydrates} g</span></div>
               <div>Fat: <span className="font-medium text-slate-100">{f.fat} g</span></div>
-              <div role="button" onClick={() => {alert(`Food Id: ${f.id}`)}} className="cursor-pointer flex flex-row items-center border-emerald-300 text-emerald-300  hover:text-emerald-600  transition ">
+              <div role="button" onClick={() => {handleAddFood(f)}} className="cursor-pointer flex flex-row items-center border-emerald-300 text-emerald-300  hover:text-emerald-600  transition ">
                 <p className="">Add</p>
                 <AddIcon className="" />
               </div>
@@ -50,7 +111,7 @@ export default function FoodSearchPanel() {
           </div>
         ))}
 
-        {q && results.length === 0 && (
+        {q.length >= 3 && foods?.length === 0 && (
           <div className="text-xs text-slate-400 text-center py-3">No results</div>
         )}
       </div>

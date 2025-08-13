@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         console.log("---------- API LOGIN ROUTE ERROR ----------");
         console.error("Error during login:", error);
         const errorResponse: ErrorResponse = {
-            message: { error: ["An unexpected error occurred during login"] },
+            message: { Error: ["An unexpected error occurred during login"] },
             type: "InternalServerError",
             title: "Login Error",
             status: 500

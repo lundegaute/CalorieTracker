@@ -29,7 +29,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
         {/* Left Rail: Actions / Add Food */}
         <aside className="space-y-5 order-last xl:order-first">
           <Panel title="Add Food">
-            <FoodSearchPanel />
+            <FoodSearchPanel mealId={mealId}/>
           </Panel>
         </aside>
         {/* Center: Meal Foods Table */}

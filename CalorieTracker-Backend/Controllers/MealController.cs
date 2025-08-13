@@ -109,17 +109,22 @@ namespace CalorieTracker.Controller
             }
             catch (ArgumentOutOfRangeException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error during Meal update", 400);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Error adding food item to meal", 400);
+                return BadRequest(response);
+            }
+            catch (ArgumentException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error adding food item to meal", 400);
                 return BadRequest(response);
             }
             catch (KeyNotFoundException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error during Meal update", 400);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error adding food item to meal", 400);
                 return BadRequest(response);
             }
             catch (HttpRequestException)
             {
-                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error during Meal update", 500);
+                var response = ResponseBuilder.BuildGenericResponse(["Server Error"], typeof(HttpRequestException).Name, "Error adding food item to meal", 500);
                 return BadRequest(response);
             }
         }

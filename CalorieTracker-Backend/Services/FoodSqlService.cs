@@ -14,26 +14,29 @@ namespace CalorieTracker.Services
         {
             _context = context;
         }
+        
         public async Task<IEnumerable<ResponseFoodDTO>> GetFoods()
         {
             var foods = await _context.Foods.ToListAsync();
             var response = ResponseBuilder.Foods(foods);
             return response;
         }
-        public async Task<ResponseFoodDTO> GetFood(int id)
-        {
-            Validation.CheckIfIdInRange(id);
 
-            var food = await _context.Foods.FindAsync(id);
+        public async Task<ResponseFoodDTO> GetFood(string name)
+        {
+            Validation.CheckIfNull(name);
+
+            var food = await _context.Foods.FirstOrDefaultAsync(f => f.Name == name);
             Validation.CheckIfNull(food);
 
             var response = ResponseBuilder.Foods([food!]);
             return response.FirstOrDefault()!;
         }
+
         public async Task<ResponseFoodDTO> AddFood(AddFoodDTO foodDTO)
         {
             var foodExists = await _context.Foods.AnyAsync(f => f.Name == foodDTO.Name);
-            Validation.IfInDatabaseThrowException(foodExists, typeof(FoodSummarySql).Name);
+            Validation.IfInDatabaseThrowException(foodExists, foodDTO.Name);
 
             var foodToAdd = new FoodSummarySql
             {
@@ -49,6 +52,7 @@ namespace CalorieTracker.Services
             var response = ResponseBuilder.Foods([getNewFood!]);
             return response.FirstOrDefault()!;
         }
+
         public async Task<ResponseFoodDTO> UpdateFood(int id, UpdateFoodDTO updateFoodDTO)
         {
             Validation.CheckIfIdInRange(id);
@@ -70,6 +74,7 @@ namespace CalorieTracker.Services
             var response = ResponseBuilder.Foods([foodToUpdate]);
             return response.FirstOrDefault()!;
         }
+
         public async Task DeleteFood(int id)
         {
             Validation.CheckIfIdInRange(id);

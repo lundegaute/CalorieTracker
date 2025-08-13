@@ -1,4 +1,4 @@
-import { ErrorResponse, MealNameDTO, MealFoods } from "@/Types/types";
+import { ErrorResponse, MealNameDTO, MealFoods, AddMealDTO, MealDTO} from "@/Types/types";
 import { NextResponse, NextRequest } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
 
@@ -54,11 +54,6 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
 }
 
 
-export async function POST(req: NextRequest) {
-    const body: MealNameDTO = await req.json();
-    console.log("---------- API ROUTE POST A MEAL ----------");
-    // Add new meal
-}
 
 
 export async function DELETE(req: NextRequest, {params}: {params: {id: string}}) {

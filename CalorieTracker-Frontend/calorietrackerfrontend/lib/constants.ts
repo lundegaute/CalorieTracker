@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     MEAL_NAME: `${BASE_URL}/MealName`,
     MEAL: `${BASE_URL}/Meal`,
     SEARCH: `${BASE_URL}/Search`,
-    FOOD: `${BASE_URL}/Food`,
+    FOOD: `${BASE_URL}/Foods`,
+    FOODSQL: `${BASE_URL}/FoodSql`,
 
 }

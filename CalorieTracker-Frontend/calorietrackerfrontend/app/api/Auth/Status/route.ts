@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
     if (  result.title === "Token expired" || result.title === "Token invalid" || result.title === "Token not found") {
         return NextResponse.json(
-            { authenticated: false, reason: result.message.error[0] },
+            { authenticated: false, reason: result.message.Error[0] },
             { status: 401 }
         );
     } else {

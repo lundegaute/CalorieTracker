@@ -52,11 +52,11 @@ namespace CalorieTracker.HelperMethods
         {
             ArgumentOutOfRangeException.ThrowIfNegative(number);
         }
-        public static void IfInDatabaseThrowException(bool isDuplicate, string className)
+        public static void IfInDatabaseThrowException(bool isDuplicate, string name)
         {
             if (isDuplicate)
             {
-                throw new ArgumentException($"{className} already in database");
+                throw new ArgumentException($"{name} already in database");
             }
         }
         

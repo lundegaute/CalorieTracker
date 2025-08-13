@@ -1,4 +1,4 @@
-import { ErrorResponse, MealSummary, DecodedToken } from "@/Types/types";
+import { ErrorResponse, MealSummary, DecodedToken, AddMealDTO, MealDTO } from "@/Types/types";
 import { NextResponse, NextRequest } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
 import ValidateToken from "@/HelperFunctions/validateToken";
@@ -51,3 +51,41 @@ export async function GET(req: NextRequest) {
     }
 }
 
+
+export async function POST(req: NextRequest, {params}: {params: {id: string}}) {
+    const body: AddMealDTO = await req.json();
+    const token = req.cookies.get("token")?.value;
+    console.log("---------- API ROUTE POST A MEAL ----------");
+    console.log(`${API_ENDPOINTS.MEAL}`);
+    // Add food item to meal
+    try {
+        const res = await fetch(`${API_ENDPOINTS.MEAL}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body)
+        });
+        if ( !res.ok ) {
+            const errorData = await res.json() as ErrorResponse;
+            return NextResponse.json(errorData, { status: errorData.status });
+        };
+        const data = await res.json() as MealDTO;
+        return NextResponse.json(data, {status: 200});
+    } catch (error) {
+        console.log("----- API ROUTE POST A MEAL ERROR -----");
+        console.log(error);
+        return NextResponse.json(
+            {message: {
+                Error: ["Server error in API ROUTE"]
+            },
+            type: "Server error",
+            title: "API ROUTE ERROR",
+            status: 500
+            },
+            {status: 500}
+        );
+    }
+
+}

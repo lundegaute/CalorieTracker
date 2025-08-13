@@ -1,4 +1,5 @@
 using CalorieTracker.DTO;
+using CalorieTracker.HelperMethods;
 using CalorieTracker.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,29 +36,37 @@ namespace CalorieTracker.Controllers
 
 
         /// <summary>
-        /// Getting one food from the DB based on ID
+        /// Getting one food from the DB based on Name
         /// </summary>
         /// <response code="200">Returns a food based on ID</response>
-        /// <response code="400">If the ID is less than or equal to zero.</response>
-        /// <response code="404">If the food with the specified ID is not found.</response>
+        /// <response code="400">If the food with the specified name is not found.</response>
         /// <response code="500">If there is an internal server error.</response>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseFoodDTO>> GetFood(int id)
+        [HttpGet("{name}")]
+        public async Task<ActionResult<ResponseFoodDTO>> GetFood(string name)
         {
             try
             {
-                var food = await _foodSqlService.GetFood(id);
+                Console.WriteLine("------------------------------");
+                Console.WriteLine(name);
+                var food = await _foodSqlService.GetFood(name);
                 return Ok(food);
             }
-            catch (ArgumentOutOfRangeException e) { return BadRequest(new { message = e.Message }); }
-            catch (KeyNotFoundException e) { return BadRequest(new { message = e.Message }); }
-            catch (HttpRequestException) { return StatusCode(500, "Server Error while fetching food"); }
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Error fetching food from database", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Error fetching food from database", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
         /// Add new food to the MySql DB
         /// </summary>
-        /// <respone code="201">Returns the newly created food.</response>
+        /// <response code="201">Returns the newly created food.</response>
         /// <response code="400">If the food already exists or if the input is invalid.</response>
         /// <response code="500">If there is an internal server error.</response>
         [HttpPost]
@@ -66,10 +75,18 @@ namespace CalorieTracker.Controllers
             try
             {
                 var addedFood = await _foodSqlService.AddFood(addFoodDTO);
-                return CreatedAtAction(nameof(GetFood), new { id = addedFood.Id }, addedFood);
+                return CreatedAtAction(nameof(GetFood), new { name = addedFood.Name }, addedFood);
             }
-            catch (ArgumentException e) { return BadRequest(new { message = e.Message }); }
-            catch (HttpRequestException) { return StatusCode(500, "Server error adding new Food to DB"); }
+            catch (ArgumentException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentException).Name, "Error adding food to database", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Error adding food to database", 500);
+                return BadRequest(response);
+            }
         }
 
         /// <summary>
@@ -92,6 +109,13 @@ namespace CalorieTracker.Controllers
             catch (KeyNotFoundException e) { return NotFound(new { message = e.Message }); }
             catch (HttpRequestException) { return StatusCode(500, "Server error adding new Food to DB"); }
         }
+
+        /// <summary>
+        /// Delete a food item from the MySql database
+        /// </summary>
+        /// <response code="200">Returns a success message.</response>
+        /// <response code="404">If the food with the specified ID is not found.</response>
+        /// <response code="500">If there is an internal server error.</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteFood(int id)
         {

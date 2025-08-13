@@ -24,7 +24,7 @@ namespace CalorieTracker.Services
             _foodsCollection.Indexes.CreateOne(indexModel);
         }
 
-        
+
         // ------------------------------------------ Methods
         public async Task<IEnumerable<FoodSummary>> GetFoodsAsync()
         {
@@ -34,12 +34,24 @@ namespace CalorieTracker.Services
 
         public async Task<IEnumerable<FoodSummary>> Search(string name)
         {
-            var filter = Builders<FoodSummary>
-                .Filter
-                .Regex(f => f.Name, new MongoDB.Bson.BsonRegularExpression(name.Trim(), "i")); // Case-insensitive search
-            var foods = await _foodsCollection.Find(filter).ToListAsync();
+            var queryWords = name.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
+            var filterBuilder = Builders<FoodSummary>.Filter;
+            var filters = queryWords
+                .Select(word => filterBuilder.Regex(
+                    f => f.Name,
+                    new MongoDB.Bson.BsonRegularExpression(word, "i") // "i" = case-insensitive
+                ))
+                .ToList();
+
+            var combinedFilter = filterBuilder.And(filters); // Example of combined filter: f => f.Name.Regex(new BsonRegularExpression("word", "i"))
+
+            var foods = await _foodsCollection
+                .Find(combinedFilter)
+                .ToListAsync();
+
             return foods;
-        } 
+        }
 
         public async Task<string> LoadIntoDetailedFood(IEnumerable<Food> foods)
         {

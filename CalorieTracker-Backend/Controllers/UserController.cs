@@ -54,7 +54,7 @@ namespace CalorieTracker.Controllers
         /// <response code="200">Returns a JWT token</response>
         /// <response code="400">If the email does not match any user or if the credentials are wrong</response>
         /// <response code="500">If there is an error logging in the user</response>
-        [HttpPost("Login")]
+        [HttpPost("Login")] 
         [SwaggerRequestExample(typeof(LoginUserDTO), typeof(LoginUserExample))]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserDTO user)
         {
