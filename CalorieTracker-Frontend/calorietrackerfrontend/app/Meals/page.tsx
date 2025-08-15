@@ -1,5 +1,6 @@
 import MealNames from "@/components/DataGrids/MealNames";
 import AddMealName from "@/components/MealName/AddMealName";
+import {ShowTotals} from "@/components/MealName/ShowTotals";
 
 export default function Meals() {
   return (
@@ -22,8 +23,8 @@ export default function Meals() {
       <div className="grid gap-8 xl:grid-cols-[250px_minmax(0,1fr)_300px]">
         {/* Left Sidebar */}
         <aside className="space-y-5 order-last xl:order-first">
-          <InfoCard title="Total Meals" value="—" hint="(auto)" />
-          <InfoCard title="Avg Kcal / Meal" value="—" hint="(coming)" />
+          {/* Create infocard component to load in here  */}
+          <ShowTotals />
           <InfoCard title="Last Updated" value={new Date().toLocaleDateString()} hint="Local date" />
         </aside>
 
@@ -90,8 +91,3 @@ function PlaceholderChart({ label }: { label: string }) {
     </div>
   );
 }
-
-// Tailwind custom animation (optional):
-// Add to globals.css if you want the slow spin:
-// @keyframes spin-slow { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-// .animate-spin-slow { animation: spin-slow 8s linear infinite; }

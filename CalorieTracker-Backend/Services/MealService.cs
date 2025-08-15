@@ -77,18 +77,18 @@ namespace CalorieTracker.Services
             var response = ResponseBuilder.Meals([mealToAdd]).FirstOrDefault();
             return response!;
         }
-        public async Task UpdateMealForUser(int id, int userID, UpdateMealDTO updateMealDTO)
+        public async Task UpdateMealForUser( int userID, UpdateMealDTO updateMealDTO)
         {
             // Check if id, userID are valid
             // Find Meal, check if it exists, update Quantity
 
-            Validation.CheckIfIdInRange(id);
+            Validation.CheckIfIdInRange(updateMealDTO.Id);
             Validation.CheckIfIdInRange(userID);
             Validation.ThrowErrorIfNegative(updateMealDTO.Quantity);
 
             var mealToUpdate = await _context.Meals
             .Where(m =>
-                m.Id == id &&
+                m.Id == updateMealDTO.Id &&
                 m.MealName.User.Id == userID )
             .FirstOrDefaultAsync();
             Validation.CheckIfNull(mealToUpdate);

@@ -135,14 +135,14 @@ namespace CalorieTracker.Controller
         /// <response code="200">Returns a success message</response>
         /// <response code="400">If the meal ID is invalid or user ID is not found</response>
         /// <response code="404">If the meal with the given ID does not exist for the user</response>
-        /// <response code="500">If there is a server error while updating the meal</
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMealForUser(int id, [FromBody] UpdateMealDTO updateMealDTO)
+        /// <response code="500">If there is a server error while updating the meal</response>
+        [HttpPut]
+        public async Task<ActionResult> UpdateMealForUser( [FromBody] UpdateMealDTO updateMealDTO)
         {
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                await _mealService.UpdateMealForUser(id, int.Parse(userID), updateMealDTO);
+                await _mealService.UpdateMealForUser( int.Parse(userID), updateMealDTO);
                 return Ok(new { message = "Meal updated successfully" });
             }
             catch (ArgumentOutOfRangeException e)

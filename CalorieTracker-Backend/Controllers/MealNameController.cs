@@ -122,15 +122,15 @@ namespace CalorieTracker.Controllers
         /// <response code="400">MealName already exists for the current user</response>
         /// <response code="400">UserID has no match in the database</response>
         /// <response code="500">Server error when updating MealName</response>
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMealName(int id, [FromBody] UpdateMealNameDTO updateMealNameDTO)
+        [HttpPut]
+        public async Task<ActionResult> UpdateMealName( [FromBody] UpdateMealNameDTO updateMealNameDTO)
         {
             try
             {
                 var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                await _mealNameService.UpdateMealName(id, updateMealNameDTO, int.Parse(userID));
+                await _mealNameService.UpdateMealName(updateMealNameDTO, int.Parse(userID));
 
-                return Ok("Meal Name updated successfully");
+                return Ok(new { message = "Update successfull"});
             }
             catch (ArgumentOutOfRangeException e)
             {

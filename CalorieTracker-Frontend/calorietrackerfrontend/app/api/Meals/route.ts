@@ -87,5 +87,47 @@ export async function POST(req: NextRequest, {params}: {params: {id: string}}) {
             {status: 500}
         );
     }
-
 }
+
+export async function PUT(req: NextRequest) {
+    const token = req.cookies.get("token")?.value;
+    const body = await req.json();
+    console.log("----- API MEAL ROUTE -----");
+    console.log(API_ENDPOINTS.MEAL);
+    try {
+        const res = await fetch(API_ENDPOINTS.MEAL, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "Application/Json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body),
+        });
+        if ( !res.ok ) {
+            console.log("----- API MEAL UPDATE ROUTE NOT OK -----");
+            const errorData = await res.json() as ErrorResponse;
+            return NextResponse.json(
+                errorData,
+                { status: errorData.status },
+            );
+        };
+        return NextResponse.json(
+            { message: "Meal updated successfylly" },
+            { status: 200 }
+        )
+    } catch (error) {
+        console.log("----- API MEAL UPDATE ROUET ERROR -----");
+        const errorData: ErrorResponse = {
+            message: {
+                Error: ["Server Error"]
+            },
+            title: "Update error",
+            type: "Update",
+            status: 500
+        }
+        return NextResponse.json(
+            errorData,
+            { status: 500 }
+        )
+    }
+};

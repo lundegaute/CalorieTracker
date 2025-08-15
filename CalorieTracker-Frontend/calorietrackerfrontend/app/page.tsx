@@ -51,7 +51,7 @@ export default function Home() {
         <div className="grid gap-6 md:grid-cols-3">
           <FeatureCard
             title="Meal Logging"
-            status="wip"
+            status="done"
             description="Quickly add meals & individual foods from Matvaretabellens database."
           />
           <FeatureCard

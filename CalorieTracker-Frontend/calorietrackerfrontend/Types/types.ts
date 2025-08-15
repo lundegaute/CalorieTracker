@@ -36,6 +36,10 @@ export type AddFoodDTO = {
 export type AddMealNameDTO = {
     name: string;
 }
+export type UpdateMealNameDTO = {
+    id: number;
+    name: string;
+}
 export type MealNameDTO = {
     id: number;
     name: string;
@@ -51,6 +55,12 @@ export type AddMealDTO = {
     quantity: number;
     mealNameId: number;
     foodId: number;
+}
+export type UpdateMealDTO = {
+    id: number;
+    quantity: number;
+    mealNameId: number;
+    foodId: number
 }
 export type MealSummary = {
     id: number
@@ -68,6 +78,12 @@ export type MealFoods = {
     protein: number;
     carbohydrates: number;
     fat: number;
+}
+
+export type MealTotals = {
+    totalCalories: number;
+    totalMeals: number;
+    avgCalories: number;
 }
 
 export type Error = {
@@ -97,3 +113,6 @@ export type DecodedToken = {
     sub?: string;
 };
 
+export type SuccessMessage = {
+    message: string
+}

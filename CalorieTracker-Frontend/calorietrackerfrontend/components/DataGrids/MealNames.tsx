@@ -3,23 +3,34 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {MealSummary, ErrorResponse} from '@/Types/types';
-import {helper} from "@/HelperFunctions/helper";
-import { useQuery } from '@tanstack/react-query';
+import {MealSummary, ErrorResponse, UpdateMealNameDTO, SuccessMessage} from '@/Types/types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {fetchGet} from "@/Fetch/fetchGet";
+import { fetchPut} from "@/Fetch/fetchPut";
 import {fetchDelete} from "@/Fetch/fetchDelete";
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddMealName from "@/components/MealName/AddMealName";
 
 
 
 export default function MealGrid() {
-  
+  const queryClient = useQueryClient();
   const { data: mealsSummary, error, isLoading: isLoadingMeals, refetch: refetchMeals } = useQuery<MealSummary[], ErrorResponse>({
     queryKey: ["MealsSummary"],
     queryFn: async () => fetchGet<MealSummary[]>("/api/Meals"), 
     retry: 0,
-  })
+  });
+
+  async function handleMealNameChange(mealNameId: number, updatedName: string) {
+      console.log(name);
+      const mealNameUpdate: UpdateMealNameDTO = {
+        id: mealNameId,
+        name: updatedName,
+      }
+      const res = await fetchPut<SuccessMessage, UpdateMealNameDTO>(`/api/MealName`, mealNameUpdate);
+      if ( res.success ) {
+        queryClient.refetchQueries({queryKey: ["MealsSUmmary"]})
+      }
+  }
 
   // Early returns - prevent rest of code from executing
   if (isLoadingMeals) {
@@ -34,7 +45,7 @@ export default function MealGrid() {
 
   const columns: GridColDef[] = [
       { field: "id", headerName: "ID", width: 70, },
-      { field: 'name', headerName: 'Name', width: 90 },
+      { field: 'name', headerName: 'Name', width: 90, editable: true },
       { field: 'totalCalories', headerName: 'Kcal', type: 'number', width: 65 },
       { field: 'totalProtein', headerName: 'Protein', type: 'number', width: 65 },
       { field: 'totalCarbohydrate', headerName: 'Carbs', type: 'number', width: 65 },
@@ -69,6 +80,13 @@ export default function MealGrid() {
     autoHeight
     disableRowSelectionOnClick
     columnVisibilityModel={{ id: false }}
+    processRowUpdate={(newRow, oldRow) => {
+      if ( newRow.name !== oldRow.name) {
+          handleMealNameChange(newRow.id, newRow.name);
+      }
+      return newRow;
+    }}
+    onProcessRowUpdateError={(err) => console.error(err)}
     initialState={{
       pagination: { paginationModel: { pageSize: 5 } },
     }}

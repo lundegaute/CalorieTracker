@@ -12,7 +12,6 @@ import {fetchGet} from "@/Fetch/fetchGet";
 export default function FoodSearchPanel({mealId}: {mealId: number}) {
   const queryClient = useQueryClient();
   const [q, setQ] = useState("");
-  console.log("FoodSearchPanel mealId:", mealId);
   const { data: foods, isLoading: isLoadingFoods, error, refetch: refetchFoods } = useQuery<FoodFromMongo[], ErrorResponse>({
     queryKey: ["foodsFromMongo", q],
     queryFn: async () => {
@@ -20,11 +19,10 @@ export default function FoodSearchPanel({mealId}: {mealId: number}) {
       if (!res.success) throw res.error;
       return res.data;
     },
-    enabled: q.length >= 3, 
+    enabled: q.length >= 3,
+    retry: 0, 
   });
 
-
-  
 
   async function handleAddFood(food: FoodFromMongo) {
     console.log(food);

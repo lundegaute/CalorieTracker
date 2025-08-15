@@ -3,6 +3,9 @@ using Microsoft.Extensions.Options;
 using CalorieTracker.Data;
 using CalorieTracker.Models;
 using Microsoft.EntityFrameworkCore;
+using CalorieTracker.Services;
+using CalorieTracker.HelperMethods;
+using CalorieTracker.DTO;
 
 namespace CalorieTracker.Services
 {
@@ -10,12 +13,14 @@ namespace CalorieTracker.Services
     {
         private readonly IMongoCollection<FoodSummary> _foodsCollection;
         private readonly IMongoCollection<Food> _detailedFoodCollection;
+        private readonly FoodSqlService _foodSqlService;
 
-        public FoodService(IMongoClient mongoClient, IOptions<MongoDbSettingsClass> mongoDbSettings)
+        public FoodService(IMongoClient mongoClient, IOptions<MongoDbSettingsClass> mongoDbSettings, FoodSqlService foodSqlService)
         {
             var database = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
             _foodsCollection = database.GetCollection<FoodSummary>("Food");
             _detailedFoodCollection = database.GetCollection<Food>("DetailedFoods");
+            _foodSqlService = foodSqlService;
 
             // Ensure unique index on Name
             var indexKeys = Builders<FoodSummary>.IndexKeys.Ascending(f => f.Name);
@@ -32,7 +37,7 @@ namespace CalorieTracker.Services
             return foods;
         }
 
-        public async Task<IEnumerable<FoodSummary>> Search(string name)
+        public async Task<IEnumerable<ResponseFoodDTO>> Search(string name)
         {
             var queryWords = name.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
@@ -50,7 +55,22 @@ namespace CalorieTracker.Services
                 .Find(combinedFilter)
                 .ToListAsync();
 
-            return foods;
+            if (foods.Count == 0) // If no food is found in MongoDB, a search in the SQL database is done for that specific name
+            {
+                var foodFromSql = await _foodSqlService.GetFood(name);
+                return [foodFromSql];
+            }
+            var foodSummarySql = foods.Select( (f, index) => new FoodSummarySql
+            {
+                Id = index + 1,
+                Name = f.Name,
+                Calories = f.Calories,
+                Protein = f.Protein,
+                Carbohydrates = f.Carbohydrates,
+                Fat = f.Fat,
+            });
+            var response = ResponseBuilder.Foods(foodSummarySql);
+            return response;
         }
 
         public async Task<string> LoadIntoDetailedFood(IEnumerable<Food> foods)

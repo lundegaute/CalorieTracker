@@ -4,7 +4,7 @@ import FoodSearchPanel from "@/components/MealDetails/FoodSearchPanel";
 
 
 export default async function Meal({ params }: {params: { id: string }}) {
-  const mealId = Number(params.id);
+  const mealNameId = Number(params.id);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
@@ -12,7 +12,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
       <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
         <div>
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-emerald-300 to-teal-200 bg-clip-text text-transparent">
-            Meal #{mealId}
+            Meal #{mealNameId}
           </h1>
           <p className="mt-2 text-sm text-slate-400">
             Review foods, adjust quantities, and monitor macros.
@@ -29,7 +29,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
         {/* Left Rail: Actions / Add Food */}
         <aside className="space-y-5 order-last xl:order-first">
           <Panel title="Add Food">
-            <FoodSearchPanel mealId={mealId}/>
+            <FoodSearchPanel mealId={mealNameId}/>
           </Panel>
         </aside>
         {/* Center: Meal Foods Table */}
@@ -43,7 +43,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
           </div>
           <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent mb-4" />
           <div className="flex justify-center">
-            <MealDetails id={mealId} />
+            <MealDetails mealNameId={mealNameId} />
           </div>
         </section>
 

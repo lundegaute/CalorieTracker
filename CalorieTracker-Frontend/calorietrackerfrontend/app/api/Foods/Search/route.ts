@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse} from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
-import {ErrorResponse, FoodFromMongo} from "@/Types/types";
+import {ErrorResponse, FoodFromMongo, FoodDTO} from "@/Types/types";
 
 export async function POST(req: NextRequest) {
     const search = await req.json();
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
                 { status: errorData.status, }
             );
         };
-        const data = await res.json() as FoodFromMongo;
+        const data = await res.json() as FoodDTO;
         return NextResponse.json(
             data,
             { status: 200 }

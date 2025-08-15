@@ -54,8 +54,6 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
 }
 
 
-
-
 export async function DELETE(req: NextRequest, {params}: {params: {id: string}}) {
     console.log("----- API ROUTE DELETE FOOD ITEM -----");
     const token = req.cookies.get("token")?.value;

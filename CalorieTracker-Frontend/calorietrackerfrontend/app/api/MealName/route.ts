@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { API_ENDPOINTS } from "@/lib/constants";
-import {MealNameDTO, ErrorResponse} from "@/Types/types";
+import {MealNameDTO, ErrorResponse, SuccessMessage} from "@/Types/types";
 
 
 export async function POST(req: NextRequest) {
@@ -54,6 +54,52 @@ export async function POST(req: NextRequest) {
             {
                 status: 500
             }
+        );
+    };
+};
+
+export async function PUT(req: NextRequest) {
+    console.log("----- API ROUTE PUT MEALNAME -----");
+    const token = req.cookies.get("token")?.value;
+    const body = await req.json();
+    console.log(JSON.stringify(body));
+    console.log(API_ENDPOINTS.MEAL_NAME);
+    try {
+        const res = await fetch(API_ENDPOINTS.MEAL_NAME, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "Application/Json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body),
+        })
+        if ( !res.ok ) {
+            console.log("----- API ROUTE PUT MEALNAME RES NOT OK -----");
+            const errorData = await res.json() as ErrorResponse;
+            return NextResponse.json(
+                errorData,
+                { status: errorData.status },
+            );
+        };
+        const data = await res.json() as SuccessMessage;
+        return NextResponse.json(
+            data,
+            { status: 200 }
         )
-    }
-}
+    } catch ( error ) {
+        console.log("----- API ROUTE PUT MEALNAME ERROR -----");
+        console.error(error);
+        const errorData: ErrorResponse = {
+            message: {
+                Error: ["Server Error"]
+            },
+            type: "Server error",
+            title: "Server error",
+            status: 500
+        };
+        return NextResponse.json(
+            errorData,
+            { status: 500 }
+        );
+    };
+};

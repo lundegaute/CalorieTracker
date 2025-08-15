@@ -3,32 +3,49 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
-import { MealFoods, ErrorResponse } from "@/Types/types";
-import { fetchGet } from "@/Fetch/fetchGet";
+import { MealFoods, ErrorResponse, FoodDTO, UpdateMealDTO, SuccessMessage} from "@/Types/types";
+import { fetchGet} from "@/Fetch/fetchGet";
+import { fetchPut } from "@/Fetch/fetchPut";
 import { fetchDelete } from "@/Fetch/fetchDelete";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/material";
 
 interface MealDetailsProps {
-  id: number;
+  mealNameId: number;
 }
 
-export function MealDetails({ id }: MealDetailsProps) {
+export function MealDetails({ mealNameId }: MealDetailsProps) {
   const { data, error, isLoading, refetch: refetchMeal } = useQuery<MealFoods[], ErrorResponse>({
-    queryKey: ["MealDetails", id],
-    queryFn: async () => fetchGet<MealFoods[]>(`/api/Meals/${id}`),
+    queryKey: ["MealDetails", mealNameId],
+    queryFn: async () => fetchGet<MealFoods[]>(`/api/Meals/${mealNameId}`),
     retry: 0,
     staleTime: 5 * 60 * 1000
   });
+
+  async function handleQuantityChange(quantity: number, mealId: number, mealNameId: number, foodName: string) {
+      const foodItem = await fetchGet<FoodDTO>(`/api/Foods/${encodeURIComponent(foodName)}`);
+      const foodId = foodItem.id;
+      const updateMealDTO: UpdateMealDTO = {
+        id: mealId,
+        quantity: quantity,
+        mealNameId: mealNameId,
+        foodId: foodId,
+      }
+      const res = await fetchPut<SuccessMessage, UpdateMealDTO>(`/api/Meals`, updateMealDTO);
+      if ( res.success ) {
+        refetchMeal();
+      }
+      
+  }
 
   if (isLoading) return <p className="text-sm text-slate-400">Loading...</p>;
   if (error) return <p className="text-sm text-rose-400">Failed to load meal details.</p>;
 
   const columns: GridColDef[] = [
     { field: "mealId", headerName: "ID", width: 50},
-    { field: "foodName", headerName: "Food", width: 150 },
-    { field: "quantity", headerName: "Qty", type: "number", editable: true, width: 70 },
+    { field: "foodName", headerName: "Food", width: 150},
+    { field: "quantity", headerName: "Qty", type: "number", editable: true, width: 70, },
     { field: "calories", headerName: "Kcal", type: "number", width: 70 },
     { field: "protein", headerName: "Prot", type: "number", width: 70 },
     { field: "carbohydrates", headerName: "Carbs", type: "number", width: 70 },
@@ -39,6 +56,7 @@ export function MealDetails({ id }: MealDetailsProps) {
       width: 55,
       sortable: false,
       filterable: false,
+
       renderCell: (params) => (
         <IconButton
           size="small"
@@ -77,6 +95,13 @@ export function MealDetails({ id }: MealDetailsProps) {
         hideFooterSelectedRowCount
         density="compact"
         columnVisibilityModel={{mealId: false}}
+        processRowUpdate={(newRow, oldRow) => {
+            if (newRow.quantity !== oldRow.quantity) {
+                handleQuantityChange(newRow.quantity, newRow.mealId, mealNameId, newRow.foodName);
+            }
+            return newRow;
+        }}
+        onProcessRowUpdateError={(err) => console.error(err)}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } }
         }}
