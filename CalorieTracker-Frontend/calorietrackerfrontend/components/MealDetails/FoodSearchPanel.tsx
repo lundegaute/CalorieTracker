@@ -85,6 +85,7 @@ export default function FoodSearchPanel({mealId}: {mealId: number}) {
         size="small"
         label="Search foods"
         placeholder="Type to search…"
+        autoComplete="off"
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />

@@ -67,7 +67,7 @@ export type MealSummary = {
     name: string;
     totalCalories: number | null;
     totalProtein: number | null;
-    totalCarbohydrates: number | null;
+    totalCarbohydrate: number | null;
     totalFat: number | null;
 }
 export type MealFoods = {
@@ -78,6 +78,12 @@ export type MealFoods = {
     protein: number;
     carbohydrates: number;
     fat: number;
+}
+export type MealDetailsTotal = {
+    totalCalories: number;
+    totalProtein: number;
+    totalCarbs: number;
+    totalFat: number;
 }
 
 export type MealTotals = {

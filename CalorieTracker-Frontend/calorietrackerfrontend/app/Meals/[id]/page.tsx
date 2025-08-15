@@ -1,7 +1,8 @@
 
 import { MealDetails } from "@/components/DataGrids/MealDetails";
 import FoodSearchPanel from "@/components/MealDetails/FoodSearchPanel";
-
+import { MacroPieChart } from "@/components/MealDetails/MacroPieChart";
+import { QuickMacros } from "@/components/MealDetails/QuickMacros";
 
 export default async function Meal({ params }: {params: { id: string }}) {
   const mealNameId = Number(params.id);
@@ -49,13 +50,11 @@ export default async function Meal({ params }: {params: { id: string }}) {
 
         {/* Right Rail: Stats / Charts */}
         <aside className="space-y-5">
-          <Panel title="Macro Split">
-            <ChartRingPlaceholder />
+          <Panel title="Macro Distribution">
+            <MacroPieChart mealNameId={mealNameId} />
           </Panel>
           <Panel title="Quick Macros">
-            <MiniMetric label="Protein" value="— g" color="text-emerald-300" />
-            <MiniMetric label="Carbs" value="— g" color="text-teal-300" />
-            <MiniMetric label="Fat" value="— g" color="text-rose-300" />
+            <QuickMacros mealNameId={mealNameId}/> {/* Show Total calories and macro nutrients for the meal */}
           </Panel>
         </aside>
       </div>
@@ -74,16 +73,7 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function MiniMetric({ label, value, color }: { label: string; value: string; color?: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-md bg-white/5 px-3 py-2 text-xs">
-      <span className="text-slate-400">{label}</span>
-      <span className={`font-semibold tabular-nums ${color || "text-slate-200"}`}>{value}</span>
-    </div>
-  );
-}
-
-function PlaceholderButton({ label }: { label: string }) {
+function PlaceholderButton({ label }: { label: string }) { /* Not in use, but let it stay for now*/
   return (
     <div className="inline-flex items-center rounded-md border border-emerald-400/30 px-3 py-1.5 text-xs font-medium text-emerald-200
                     bg-emerald-500/10 hover:bg-emerald-500/20 transition cursor-not-allowed select-none">
@@ -92,18 +82,6 @@ function PlaceholderButton({ label }: { label: string }) {
   );
 }
 
-function ChartRingPlaceholder() {
-  return (
-    <div className="flex items-center justify-center h-44">
-      <div className="relative">
-        <div className="h-32 w-32 rounded-full border-4 border-emerald-500/60 border-t-transparent animate-spin-slow opacity-40" />
-        <div className="absolute inset-0 flex items-center justify-center text-[10px] text-slate-500">
-          Coming
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // (Add spin-slow keyframes in globals.css if not already present)
 // @keyframes spin-slow { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }

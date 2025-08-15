@@ -1,6 +1,7 @@
 import MealNames from "@/components/DataGrids/MealNames";
 import AddMealName from "@/components/MealName/AddMealName";
 import {ShowTotals} from "@/components/MealName/ShowTotals";
+import {MacroDistribution} from "@/components/MealName/MacroDistribution";
 
 export default function Meals() {
   return (
@@ -48,12 +49,9 @@ export default function Meals() {
             <PlaceholderChart label="Line / Area Chart Placeholder" />
           </Panel>
           <Panel title="Macro Distribution">
-            <div className="flex items-center justify-center h-44">
+            <div className="flex items-center justify-center h-50">
               <div className="relative">
-                <div className="h-32 w-32 rounded-full border-4 border-emerald-500/60 border-t-transparent animate-spin-slow opacity-40" />
-                <div className="absolute inset-0 flex items-center justify-center text-xs text-slate-400">
-                  Coming
-                </div>
+                <MacroDistribution />
               </div>
             </div>
           </Panel>

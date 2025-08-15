@@ -22,7 +22,7 @@ export function ShowTotals() {
     return (
         <div className="space-y-3">
             <InfoCard title={"Total Meals"} value={data.totalMeals || 0}/>
-            <InfoCard title={"Total Calories"} value={data.totalCalories || 0}/>
+            <InfoCard title={"Total Calories"} value={Math.round(data.totalCalories) || 0}/>
             <InfoCard title={"Avg Kcal / Meal"} value={data.avgCalories || 0}/>
         </div>
     )
