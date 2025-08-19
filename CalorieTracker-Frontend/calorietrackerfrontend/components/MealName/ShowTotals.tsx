@@ -1,11 +1,11 @@
 "use client";
 import { fetchGet } from "@/Fetch/fetchGet";
-import { MealSummary, MealTotals } from "@/Types/types";
+import { MealSummary, MealTotals, ErrorResponse } from "@/Types/types";
 import {useQuery} from "@tanstack/react-query";
 
 
 export function ShowTotals() {
-    const { data, isLoading, error} = useQuery<MealSummary[], Error, MealTotals>({
+    const { data, isLoading, error} = useQuery<MealSummary[], ErrorResponse, MealTotals>({
         queryKey: ["MealsSummary"],
         queryFn: async () => fetchGet<MealSummary[]>("/api/Meals"),
         select: (meals) => {
@@ -14,10 +14,11 @@ export function ShowTotals() {
             const avgCalories = totalCalories ? Math.round(totalCalories / totalMeals) : 0;
             return { totalCalories, totalMeals, avgCalories };
         },
+        retry: 0,
     });
 
     if (isLoading) return <div>Loading...</div>
-    if (error) return <div>{error.message}</div>
+    if (error) return <div>{error.message.Error[0]}</div>
     if (!data) return <div>No Data</div>
     return (
         <div className="space-y-3">

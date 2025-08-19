@@ -120,6 +120,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<MealNameService>();
 builder.Services.AddScoped<FoodSqlService>();
 builder.Services.AddScoped<MealService>();
+builder.Services.AddScoped<MealPlanService>();
 
 // Adding CORS policy to allow requests from the frontend
 builder.Services.AddCors(options =>

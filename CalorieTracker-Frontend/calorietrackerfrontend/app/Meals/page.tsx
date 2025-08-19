@@ -51,7 +51,7 @@ export default function Meals() {
           <Panel title="Macro Distribution">
             <div className="flex items-center justify-center h-50">
               <div className="relative">
-                <MacroDistribution />
+                <MacroDistribution /> {/*  Recharts has been installed, to make better looking charts with small animations. But has not been implemented */}
               </div>
             </div>
           </Panel>

@@ -16,15 +16,17 @@ namespace CalorieTracker.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<MealSummaryDTO>> GetMealsForUser(int userID)
+        public async Task<IEnumerable<MealSummaryDTO>> GetMealsForUser(int userID) // Updated to use mealplan table
         {
             Validation.CheckIfIdInRange(userID);
             var meals = await _context.Meals
                 .Include(m => m.MealName)
+                .ThenInclude(mn => mn.MealPlan)
                 .Include(m => m.Food)
                 .Where(m => m.MealName.User.Id == userID)
                 .ToListAsync();
             var mealNames = await _context.MealNames
+                .Include(mn => mn.MealPlan)
                 .Include(mn => mn.User)
                 .Where(mn => mn.User.Id == userID)
                 .ToListAsync();

@@ -6,13 +6,27 @@ namespace CalorieTracker.HelperMethods
 {
     public static class ResponseBuilder
     {
+        public static List<ResponseMealPlanDTO> MealPlan(IEnumerable<MealPlan> mealPlans)
+        {
+            List<ResponseMealPlanDTO> response = [];
+            response.AddRange(mealPlans.Select(mp =>
+            {
+                return new ResponseMealPlanDTO
+                {
+                    Id = mp.Id,
+                    Name = mp.Name,
+                };
+            }));
+            return response;
+        }
         public static List<ResponseMealNameDTO> MealName(IEnumerable<MealName> mealNames)
         {
             var mealNameResponse = new List<ResponseMealNameDTO>();
             mealNameResponse.AddRange(mealNames.Select(mn => new ResponseMealNameDTO
             {
                 Id = mn.Id,
-                Name = mn.Name
+                Name = mn.Name,
+                MealPlanId = mn.MealPlan.Id,
             }));
             return mealNameResponse;
         }
@@ -40,7 +54,8 @@ namespace CalorieTracker.HelperMethods
                 MealName = new ResponseMealNameDTO
                 {
                     Id = m.MealName.Id,
-                    Name = m.MealName.Name
+                    Name = m.MealName.Name,
+                    MealPlanId = m.MealName.MealPlan.Id,
                 },
                 Food = new ResponseFoodDTO
                 {
@@ -78,6 +93,7 @@ namespace CalorieTracker.HelperMethods
                 return new MealSummaryDTO
                 {
                     Id = mn.Id,
+                    MealPlanId = mn.MealPlan.Id,
                     Name = mn.Name,
                     TotalCalories = mealsForThisName.Any()
                         ? Math.Round((decimal)mealsForThisName.Sum(m => m.Food.Calories * (m.Quantity / 100)), 2)

@@ -16,7 +16,7 @@ namespace CalorieTracker.Controller
     public class MealController : ControllerBase
     {
         private readonly MealService _mealService;
-        public MealController(MealService mealService)
+        public MealController(MealService mealService) 
         {
             _mealService = mealService;
         }

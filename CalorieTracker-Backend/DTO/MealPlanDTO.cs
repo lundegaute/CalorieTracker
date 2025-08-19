@@ -3,17 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CalorieTracker.DTO
 {
-    public class AddMealNameDTO
+    public class AddMealPlanDTO
     {
         [Required]
         [MinLength(2)]
         [MaxLength(50)]
         public string Name { get; set; }
-        [Required]
-        [Range(1, int.MaxValue)]
-        public int mealPlanId { get; set; }
     }
-    public class UpdateMealNameDTO
+    public class UpdateMealPlanDTO
     {
         [Required]
         [Range(1, int.MaxValue)]
@@ -22,14 +19,10 @@ namespace CalorieTracker.DTO
         [MinLength(2)]
         [MaxLength(50)]
         public string Name { get; set; }
-        [Required]
-        [Range(1, int.MaxValue)]
-        public int mealPlanId { get; set; }
     }
-    public class ResponseMealNameDTO
+    public class ResponseMealPlanDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int MealPlanId { get; set; }
     }
 }

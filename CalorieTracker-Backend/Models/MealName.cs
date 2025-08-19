@@ -7,5 +7,6 @@ namespace CalorieTracker.Models
         public string Name { get; set; }
         public ICollection<Meal>? Meals { get; set; }
         public User User { get; set; }
+        public MealPlan MealPlan { get; set; }
     }
 }

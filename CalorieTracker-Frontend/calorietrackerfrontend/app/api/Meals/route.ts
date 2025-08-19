@@ -32,8 +32,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(errorData, { status: errorData.status });
         }
         console.log("----- API ROUTE GET MEALS SUCCESS -----");
-        const data: MealSummary[] = await res.json();
-        console.log(`Fetched Meal: ${data[0].name}. Calories:  ${data[0].totalCalories}`);
+        const data: MealSummary[] = await res.json(); // List can be empty
         return NextResponse.json(data);
 
     } catch (error) {

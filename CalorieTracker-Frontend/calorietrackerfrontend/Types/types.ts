@@ -35,14 +35,17 @@ export type AddFoodDTO = {
 
 export type AddMealNameDTO = {
     name: string;
+    mealPlanId: number;
 }
 export type UpdateMealNameDTO = {
     id: number;
     name: string;
+    mealPlanId: number;
 }
 export type MealNameDTO = {
     id: number;
     name: string;
+    mealPlanId: number;
 }
 
 export type MealDTO = {
