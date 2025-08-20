@@ -61,6 +61,7 @@ namespace CalorieTracker.Services
 
             var mealName = await _context.MealNames
                 .Include(mn => mn.User)
+                .Include(mn => mn.MealPlan)
                 .Where(mn => mn.User.Id == userID &&
                             mn.Id == addMealDTO.MealNameId)
                 .FirstOrDefaultAsync();

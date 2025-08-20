@@ -64,6 +64,8 @@ namespace CalorieTracker.Data
                 entity
                     .HasMany(u => u.MealNames)
                     .WithOne(mn => mn.User);
+                entity.HasMany(u => u.MealPlans)
+                    .WithOne(mp => mp.User);
             });
         }
     }

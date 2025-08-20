@@ -30,7 +30,8 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                var mealPlans = await _mealPlanService.GetAllMealPlans();
+                var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var mealPlans = await _mealPlanService.GetAllMealPlans(int.Parse(userID));
                 return Ok(mealPlans);
             }
             catch (HttpRequestException)
@@ -51,7 +52,8 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                var mealPlan = await _mealPlanService.GetMealPlan(id);
+                var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var mealPlan = await _mealPlanService.GetMealPlan(id, int.Parse(userID));
                 return Ok(mealPlan);
             }
             catch (ArgumentOutOfRangeException e)
@@ -81,8 +83,8 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                // var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Usikker på om jeg trenger dette 
-                var newMealPlan = await _mealPlanService.AddMealPlan(addMealPlanDTO);
+                var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
+                var newMealPlan = await _mealPlanService.AddMealPlan(addMealPlanDTO, int.Parse(userID));
                 return CreatedAtAction(nameof(GetMealPlan), new { id = newMealPlan.Id }, newMealPlan);
             }
             catch (HttpRequestException)
@@ -103,7 +105,8 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                await _mealPlanService.UpdateMealPlan(updateMealPlanDTO);
+                var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                await _mealPlanService.UpdateMealPlan(updateMealPlanDTO, int.Parse(userID));
                 return Ok(new { message = "Update successfull" });
             }
             catch (ArgumentOutOfRangeException e)
@@ -129,12 +132,23 @@ namespace CalorieTracker.Controllers
         {
             try
             {
-                await _mealPlanService.DeleteMealPlan(id);
+                var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                await _mealPlanService.DeleteMealPlan(id, int.Parse(userID));
                 return Ok(new { message = "Delete Successful" });
             }
             catch (ArgumentOutOfRangeException e)
             {
-                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Delete Mealplan", 500);
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(ArgumentOutOfRangeException).Name, "Delete Mealplan", 400);
+                return BadRequest(response);
+            }
+            catch (KeyNotFoundException e)
+            {
+                var response = ResponseBuilder.BuildGenericResponse([e.Message], typeof(KeyNotFoundException).Name, "Delete Mealplan", 400);
+                return BadRequest(response);
+            }
+            catch (HttpRequestException)
+            {
+                var response = ResponseBuilder.BuildGenericResponse(["Server error"], typeof(HttpRequestException).Name, "Delete Mealplan", 500);
                 return BadRequest(response);
             }
         }

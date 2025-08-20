@@ -44,11 +44,14 @@ namespace CalorieTracker.Services
 
             var user = await _context.Users.FindAsync(userID);
             Validation.CheckIfNull(user);
+            var mealPlan = await _context.MealPlans.FindAsync(mealNameDTO.mealPlanId);
+            Validation.CheckIfNull(mealPlan);
 
             var newMealName = new MealName
             {
                 Name = mealNameDTO.Name,
                 User = user!,
+                MealPlan = mealPlan!,
             };
             await _context.MealNames.AddAsync(newMealName);
             await _context.SaveChangesAsync();
@@ -61,12 +64,11 @@ namespace CalorieTracker.Services
             Validation.CheckIfIdInRange(userID);
             Validation.CheckIfIdInRange(updateMealNameDTO.Id);
 
-            var mealNameExistsForUser = await _context
-                .MealNames
+            var mealNameExistsForUser = await _context.MealNames
                 .AnyAsync(mn =>
-                mn.Name.ToLower() == updateMealNameDTO.Name.Trim().ToLower() &&
-                mn.User.Id == userID &&
-                mn.Id != updateMealNameDTO.Id);
+                    mn.Name.ToLower() == updateMealNameDTO.Name.Trim().ToLower() &&
+                    mn.User.Id == userID &&
+                    mn.Id != updateMealNameDTO.Id);
             Validation.IfInDatabaseThrowException(mealNameExistsForUser, typeof(MealName).Name);
 
             var user = await _context.Users.FindAsync(userID);

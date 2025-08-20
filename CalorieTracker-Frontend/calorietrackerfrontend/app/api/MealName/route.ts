@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify(body)
         })
         if ( !res.ok) {
-            console.log("----- API ADD MEALNAME RES NOT OK -----");
+            console.log("----- API ROUTE ADD MEALNAME RES NOT OK -----");
             const errorData: ErrorResponse = await res.json();
-            console.log(errorData);
+            console.log(errorData.message.Error[0]);
             return NextResponse.json(
                 errorData,
                 { status: errorData.status }

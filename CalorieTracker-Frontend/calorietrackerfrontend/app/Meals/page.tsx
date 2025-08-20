@@ -2,6 +2,7 @@ import MealNames from "@/components/DataGrids/MealNames";
 import AddMealName from "@/components/MealName/AddMealName";
 import {ShowTotals} from "@/components/MealName/ShowTotals";
 import {MacroDistribution} from "@/components/MealName/MacroDistribution";
+import SwitchMealPlans from "@/components/MealName/SwitchMealPlans";
 
 export default function Meals() {
   return (
@@ -9,7 +10,7 @@ export default function Meals() {
       <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
         <div>
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-emerald-300 to-teal-200 bg-clip-text text-transparent">
-            Meals
+            Meals 
           </h1>
           <p className="mt-2 text-sm text-slate-400">
             Overview of your logged meals with totals and future insights.
@@ -36,7 +37,7 @@ export default function Meals() {
           aria-label="Meal list"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-200">Meal List</h2>
+            <SwitchMealPlans />
           </div>
           <div className="flex justify-center">
             <MealNames />

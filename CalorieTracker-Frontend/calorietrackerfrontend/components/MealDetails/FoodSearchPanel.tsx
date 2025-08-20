@@ -59,7 +59,7 @@ export default function FoodSearchPanel({mealId}: {mealId: number}) {
       console.log("--------------------------------------------")
       if (addFoodToSql.success) {
         const newlyCreatedFood: FoodDTO = addFoodToSql.data;
-        console.log("Newly created food:", JSON.stringify(newlyCreatedFood)); // How to log the actual object: remember to stringify
+        console.log("Newly created food:", JSON.stringify(newlyCreatedFood)); 
         const addMealDTO: AddMealDTO = {
           quantity: 100,
           mealNameId: mealId,

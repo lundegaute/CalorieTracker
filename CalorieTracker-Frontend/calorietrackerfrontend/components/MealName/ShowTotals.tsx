@@ -2,12 +2,18 @@
 import { fetchGet } from "@/Fetch/fetchGet";
 import { MealSummary, MealTotals, ErrorResponse } from "@/Types/types";
 import {useQuery} from "@tanstack/react-query";
+import useMealPlanStore from "../Zustand/MealPlanStore";
 
 
+// FIX: Calculating correct calories and macro data for each meal plan
 export function ShowTotals() {
+    const mealPlanStore = useMealPlanStore();
     const { data, isLoading, error} = useQuery<MealSummary[], ErrorResponse, MealTotals>({
         queryKey: ["MealsSummary"],
-        queryFn: async () => fetchGet<MealSummary[]>("/api/Meals"),
+        queryFn: async () => {
+          const allMeals = await fetchGet<MealSummary[]>("/api/Meals");
+          return allMeals.filter(meal => meal.mealPlanId === mealPlanStore.mealPlanId);
+        },
         select: (meals) => {
             const totalCalories = meals.reduce((sum, meal) => sum += meal.totalCalories || 0, 0);
             const totalMeals = meals.length;

@@ -16,28 +16,39 @@ namespace CalorieTracker.Services
         }
 
         // Get all
-        public async Task<IEnumerable<ResponseMealPlanDTO>> GetAllMealPlans()
+        public async Task<IEnumerable<ResponseMealPlanDTO>> GetAllMealPlans(int userID)
         {
-            var mealPlans = await _context.MealPlans.ToListAsync();
+
+            var mealPlans = await _context.MealPlans
+            .Include(mp => mp.User)
+            .Where(mp => mp.User.Id == userID)
+            .ToListAsync();
             var response = ResponseBuilder.MealPlan(mealPlans);
             return response;
         }
         // Get one
-        public async Task<ResponseMealPlanDTO> GetMealPlan(int id)
+        public async Task<ResponseMealPlanDTO> GetMealPlan(int id, int userID)
         {
             Validation.CheckIfIdInRange(id);
-            var mealPlan = await _context.MealPlans.FindAsync(id);
+            var mealPlan = await _context.MealPlans
+                .Include(mp => mp.User)
+                .Where(mp => mp.User.Id == userID
+                    && mp.Id == id)
+                .FirstOrDefaultAsync();
             Validation.CheckIfNull(mealPlan);
 
             var response = ResponseBuilder.MealPlan([mealPlan!]);
             return response.FirstOrDefault()!;
         }
         // Add
-        public async Task<ResponseMealPlanDTO> AddMealPlan(AddMealPlanDTO addMealplan)
+        public async Task<ResponseMealPlanDTO> AddMealPlan(AddMealPlanDTO addMealplan, int userID)
         {
+            var currentUser = await _context.Users.FindAsync(userID);
+            Validation.CheckIfNull(currentUser);
             var newMealPlan = new MealPlan
             {
                 Name = addMealplan.Name,
+                User = currentUser!,
             };
             await _context.MealPlans.AddAsync(newMealPlan);
             await _context.SaveChangesAsync();
@@ -46,9 +57,10 @@ namespace CalorieTracker.Services
         }
 
         // Update
-        public async Task UpdateMealPlan(UpdateMealPlanDTO updateMealPlanDTO)
+        public async Task UpdateMealPlan(UpdateMealPlanDTO updateMealPlanDTO, int userID)
         {
             Validation.CheckIfIdInRange(updateMealPlanDTO.Id);
+
             var mealPlanToUpdate = await _context.MealPlans.FindAsync(updateMealPlanDTO.Id);
             Validation.CheckIfNull(mealPlanToUpdate);
 
@@ -58,10 +70,13 @@ namespace CalorieTracker.Services
         }
         
         // Delete
-        public async Task DeleteMealPlan(int id)
+        public async Task DeleteMealPlan(int id, int userID)
         {
             Validation.CheckIfIdInRange(id);
-            var mealPlanToDelete = await _context.MealPlans.FindAsync(id);
+            var mealPlanToDelete = await _context.MealPlans
+                .Include(mp => mp.User)
+                .Where(mp => mp.User.Id == userID)
+                .FirstOrDefaultAsync();
             Validation.CheckIfNull(mealPlanToDelete);
 
             _context.MealPlans.Remove(mealPlanToDelete!);

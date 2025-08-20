@@ -10,11 +10,11 @@ namespace CalorieTracker.SwaggerExamples
         {
             return new AddFoodDTO
             {
-                Name = "Havregryn",
-                Calories = 369,
-                Protein = 14.1,
-                Carbohydrates = 57.2,
-                Fat = 6.7,
+                Name = "Protein Pulver",
+                Calories = 380,
+                Protein = 73.4,
+                Carbohydrates = 5.4,
+                Fat = 6.0,
             };
         }
     }

@@ -22,9 +22,6 @@ namespace CalorieTracker.DTO
         [MinLength(2)]
         [MaxLength(50)]
         public string Name { get; set; }
-        [Required]
-        [Range(1, int.MaxValue)]
-        public int mealPlanId { get; set; }
     }
     public class ResponseMealNameDTO
     {

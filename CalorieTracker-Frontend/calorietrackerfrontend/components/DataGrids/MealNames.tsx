@@ -1,46 +1,85 @@
 "use client";
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {MealSummary, ErrorResponse, UpdateMealNameDTO, SuccessMessage} from '@/Types/types';
+import {MealSummary, ErrorResponse, UpdateMealNameDTO, SuccessMessage, AddMealPlanDTO, ResponseMealPlanDTO} from '@/Types/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {fetchGet} from "@/Fetch/fetchGet";
 import { fetchPut} from "@/Fetch/fetchPut";
 import {fetchDelete} from "@/Fetch/fetchDelete";
 import DeleteIcon from '@mui/icons-material/Delete';
+import {sweetAlertAddMealPlan, sweetAlertInput} from "@/components/SweetAlert/formInput";
+import { useEffect, useState } from "react";
+import { fetchPost } from '@/Fetch/fetchPost';
+import useMealPlanStore from "@/components/Zustand/MealPlanStore";
 
 
 
 export default function MealGrid() {
   const queryClient = useQueryClient();
-  const { data: mealsSummary, error, isLoading: isLoadingMeals, refetch: refetchMeals } = useQuery<MealSummary[], ErrorResponse>({
-    queryKey: ["MealsSummary"],
-    queryFn: async () => fetchGet<MealSummary[]>("/api/Meals"), 
+  const mealPlanStore = useMealPlanStore();
+  const [filteredData, setFilteredData] = useState<MealSummary[]>([]); // might need this to filter data based on mealPlanID
+
+  const { data: mealsSummary, error, isLoading: isLoadingMealNames, refetch: refetchMealNames } = useQuery<MealSummary[], ErrorResponse>({
+    queryKey: ["MealsSummary", mealPlanStore.mealPlanId],
+    queryFn: async () => {
+      const allMeals = await fetchGet<MealSummary[]>("/api/Meals")
+      return allMeals.filter((meal) => meal.mealPlanId === mealPlanStore.mealPlanId);
+    },
+    retry: 0,
+    enabled: mealPlanStore.mealPlanId !== null, // Only run this query if we have mealPlanId
+  });
+  const { data: mealPlans, error: mealPlanError, isLoading: isLoadingMealPlans, refetch: refetchMealPlans } = useQuery<ResponseMealPlanDTO[], ErrorResponse>({
+    queryKey: ["MealPlans"],
+    queryFn: async () => fetchGet<ResponseMealPlanDTO[]>("/api/MealPlan"), 
     retry: 0,
   });
 
+
   async function handleMealNameChange(mealNameId: number, updatedName: string) {
-      console.log(name);
+      console.log(updatedName);
       const mealNameUpdate: UpdateMealNameDTO = {
         id: mealNameId,
         name: updatedName,
       }
       const res = await fetchPut<SuccessMessage, UpdateMealNameDTO>(`/api/MealName`, mealNameUpdate);
       if ( res.success ) {
-        queryClient.refetchQueries({queryKey: ["MealsSUmmary"]})
-      }
-  }
+        queryClient.refetchQueries({queryKey: ["MealsSummary"]})
+      };
+  };
 
-  // Early returns - prevent rest of code from executing
-  if (isLoadingMeals) {
+  async function handleAddMealPlanName() {
+    const mealPlanName = { name: await sweetAlertAddMealPlan() };
+    if ( mealPlanName ) {
+      console.log(mealPlanName);
+      const res = await fetchPost<ResponseMealPlanDTO, AddMealPlanDTO>(`/api/MealPlan`, mealPlanName);
+      if ( res.success) {
+        queryClient.refetchQueries({queryKey: ["MealPlans"]})
+      };
+    };
+  };
+
+  useEffect(() => {
+    if (mealPlans && mealPlans.length > 0) {
+      mealPlanStore.setMealPlanList(mealPlans);
+      mealPlanStore.setMealPlanId(mealPlans[mealPlans.length - 1].id); // Set the current meal plan ID to the last meal plan in the list
+    }
+  }, [mealPlans]);
+
+  if (isLoadingMealNames || isLoadingMealPlans) {
     return <div>Loading meals...</div>;
   }
   if (error) {
     return <div>Error loading meals: {error.message.Error[0]}</div>;
   }
-  if (!mealsSummary) {
+  if (!mealsSummary || !mealPlans) { 
+    console.log(mealsSummary)
+    console.log("MealPlans:" + mealPlans)
     return <>No meals data available</>;
+  }
+  if (mealPlans.length == 0) {
+    handleAddMealPlanName();
+    return <>No mealplans found</>;
   }
 
   const columns: GridColDef[] = [
@@ -64,7 +103,7 @@ export default function MealGrid() {
           field: 'Delete', headerName: 'Delete', type: 'actions', width: 100, 
           renderCell: (params) => (
               <strong>
-                  <Button variant="outlined" color="error" onClick={() => fetchDelete(`/api/MealName/`, params.row.id).then(() => refetchMeals())}>
+                  <Button variant="outlined" color="error" onClick={() => fetchDelete(`/api/MealName/`, params.row.id).then(() => refetchMealNames())}>
                       <DeleteIcon />
                   </Button>
               </strong>

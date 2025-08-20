@@ -33,6 +33,14 @@ export type AddFoodDTO = {
     fat: number,
 }
 
+export type AddMealPlanDTO = {
+    name: string;
+}
+export type ResponseMealPlanDTO = {
+    id: number;
+    name: string;
+}
+
 export type AddMealNameDTO = {
     name: string;
     mealPlanId: number;
@@ -40,7 +48,7 @@ export type AddMealNameDTO = {
 export type UpdateMealNameDTO = {
     id: number;
     name: string;
-    mealPlanId: number;
+    mealPlanId?: number;
 }
 export type MealNameDTO = {
     id: number;
@@ -67,6 +75,7 @@ export type UpdateMealDTO = {
 }
 export type MealSummary = {
     id: number
+    mealPlanId: number;
     name: string;
     totalCalories: number | null;
     totalProtein: number | null;
