@@ -2,27 +2,42 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchGet } from "@/Fetch/fetchGet";
 import { MealSummary } from "@/Types/types";
+import useMealPlanStore from "@/components/Zustand/MealPlanStore";
+import {useEffect, useState} from "react";
 
 export function MacroDistribution() {
+  const mealPlanStore = useMealPlanStore();
+  const [totals, setTotals] = useState({ protein: 0, carb: 0, fat: 0});
   const { data, isLoading } = useQuery<MealSummary[]>({
-    queryKey: ["MealsSummary"],
+    queryKey: ["MealsSummary", mealPlanStore.mealPlanId],
     queryFn: () => fetchGet<MealSummary[]>("/api/Meals"),
   });
+
+  
+  useEffect(() => {
+    if (!isLoading && data) {
+      const filteredData = data.filter(meal => meal.mealPlanId === mealPlanStore.mealPlanId);
+      const newTotal = calculateTotals(filteredData);
+      setTotals(newTotal);
+    }
+  }, [data, mealPlanStore.mealPlanId]);
 
   if (isLoading || !data) {
     return <SkeletonDonut />;
   }
   
+  function calculateTotals(data: MealSummary[]) {
+    const newTotals = data.reduce(
+      (acc, m) => {
+        acc.protein += m.totalProtein || 0;
+        acc.carb += m.totalCarbohydrate || 0;
+        acc.fat += m.totalFat || 0;
+        return acc;
+      },
+      { protein: 0, carb: 0, fat: 0 });
+      return newTotals;
+  };
 
-  const totals = data.reduce(
-    (acc, m) => {
-      acc.protein += m.totalProtein || 0;
-      acc.carb += m.totalCarbohydrate || 0;
-      acc.fat += m.totalFat || 0;
-      return acc;
-    },
-    { protein: 0, carb: 0, fat: 0 }
-  );
 
 
   const totalAll = totals.protein + totals.carb + totals.fat;

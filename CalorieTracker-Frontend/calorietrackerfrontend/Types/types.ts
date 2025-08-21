@@ -40,6 +40,10 @@ export type ResponseMealPlanDTO = {
     id: number;
     name: string;
 }
+export type UpdateMealPlanDTO = {
+    id: number;
+    name: string;
+}
 
 export type AddMealNameDTO = {
     name: string;

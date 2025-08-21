@@ -5,11 +5,18 @@ import Tooltip from "@mui/material/Tooltip";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import useMealPlanStore from "../Zustand/MealPlanStore";
-import { AddMealPlanDTO, ResponseMealPlanDTO } from "@/Types/types";
-import { sweetAlertAddMealPlan } from "../SweetAlert/formInput";
+import { AddMealPlanDTO, ResponseMealPlanDTO, UpdateMealPlanDTO } from "@/Types/types";
+import { sweetAlertAddMealPlan, sweetAlertInput } from "../SweetAlert/formInput";
 import { fetchPost } from "@/Fetch/fetchPost";
 import { useQueryClient } from "@tanstack/react-query";
+import { fetchPut } from "@/Fetch/fetchPut";
+import { fetchDelete } from "@/Fetch/fetchDelete";
+import {sweetAlertConfirm} from "@/components/SweetAlert/confirmAction";
+
+
 
 export default function SwitchMealPlans() {
   const queryClient = useQueryClient();
@@ -70,6 +77,42 @@ export default function SwitchMealPlans() {
     }
   }
 
+  async function handleRenameMealPlan() {
+    if (!mealPlanList || !mealPlanList[mealPlanIndex]) return;
+    
+    const currentPlan = mealPlanList[mealPlanIndex];
+    const newName = await sweetAlertInput("Rename meal plan");
+    if (!newName || newName === currentPlan.name) return;
+
+    // Update the meal plan name via API
+    const payload = { id: currentPlan.id, name: newName };
+    const res = await fetchPut<ResponseMealPlanDTO, UpdateMealPlanDTO>("/api/MealPlan", payload);
+    
+    if (res.success) {
+      // Optimistic update is when we update the UI before the server confirms
+      const updatedList = mealPlanList.map(plan => 
+        plan.id === currentPlan.id ? { ...plan, name: newName } : plan
+      );
+      setMealPlanList(updatedList);
+      queryClient.invalidateQueries({ queryKey: ["MealPlans"] });
+    }
+  }
+
+  async function handleDeleteMealPlan() {
+    if (!mealPlanList || !mealPlanList[mealPlanIndex]) return;
+
+    const currentPlan = mealPlanList[mealPlanIndex];
+    const confirmed = await sweetAlertConfirm("Delete meal plan", `Are you sure you want to delete "${currentPlan.name}"?`);
+    if (!confirmed) return;
+    console.log(currentPlan.id)
+    await fetchDelete("/api/MealPlan", String(currentPlan.id));
+    //Optimistically remove the deleted plan from the list
+    const updatedList = mealPlanList.filter(plan => plan.id !== currentPlan.id);
+    setMealPlanList(updatedList);
+    queryClient.invalidateQueries({ queryKey: ["MealPlans"] });
+    
+  }
+
   // Empty state (no plans yet)
   if (!mealPlanList || mealPlanList.length === 0) {
     return (
@@ -96,7 +139,7 @@ export default function SwitchMealPlans() {
   return (
     <div className="flex items-center justify-between mb-4 gap-2">
       <div className="flex items-center gap-1">
-        <Tooltip title={canPrev ? "Previous plan" : ""} disableHoverListener={!canPrev}>
+        <Tooltip key={`prev-${canPrev}`} title={canPrev ? "Previous plan" : ""}  disableHoverListener={!canPrev}>
           <span>
             <IconButton
               size="small"
@@ -126,7 +169,7 @@ export default function SwitchMealPlans() {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title={canNext ? "Next plan" : ""} disableHoverListener={!canNext}>
+        <Tooltip key={`next-${canNext}`} title={canNext ? "Next plan" : ""} disableHoverListener={!canNext}>
           <span>
             <IconButton
               size="small"
@@ -144,10 +187,46 @@ export default function SwitchMealPlans() {
       <h2 className="text-lg font-semibold text-slate-200 truncate max-w-xs">
         {currentName}
       </h2>
-
+      <Tooltip title="Rename meal plan">
+    <IconButton
+      size="small"
+      onClick={handleRenameMealPlan}
+      sx={{
+        ...iconStyle,
+        padding: "4px",
+        minWidth: "auto",
+        "&:hover": {
+          backgroundColor: "rgba(255,255,255,0.15)",
+          color: "#F59E0B",
+        },
+      }}
+      aria-label="Rename meal plan"
+    >
+      <EditRoundedIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
       <div className="text-xs text-slate-500 tabular-nums">
         {mealPlanIndex + 1}/{mealPlanList.length}
       </div>
+      <Tooltip title="Delete meal plan">
+    <IconButton
+      size="small"
+      disabled={mealPlanList.length === 1}
+      onClick={handleDeleteMealPlan}
+      sx={{
+        ...iconStyle,
+        padding: "4px",
+        minWidth: "auto",
+        "&:hover": {
+          backgroundColor: "rgba(255,255,255,0.15)",
+          color: "#EF4444",
+        },
+      }}
+      aria-label="Delete meal plan"
+    >
+      <DeleteIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
     </div>
   );
 }

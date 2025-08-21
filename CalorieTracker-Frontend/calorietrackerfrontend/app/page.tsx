@@ -56,12 +56,12 @@ export default function Home() {
           />
           <FeatureCard
             title="Calories & macronutrients"
-            status="wip"
+            status="done"
             description="Measure total calorie and macronutrient intake."
           />
           <FeatureCard
             title="Visualize stats"
-            status="planned"
+            status="wip"
             description="Charts to easily show macronutrient distribution."
           />
         </div>

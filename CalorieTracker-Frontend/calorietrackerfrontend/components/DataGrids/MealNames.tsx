@@ -22,10 +22,8 @@ export default function MealGrid() {
 
   const { data: mealsSummary, error, isLoading: isLoadingMealNames, refetch: refetchMealNames } = useQuery<MealSummary[], ErrorResponse>({
     queryKey: ["MealsSummary", mealPlanStore.mealPlanId],
-    queryFn: async () => {
-      const allMeals = await fetchGet<MealSummary[]>("/api/Meals")
-      return allMeals.filter((meal) => meal.mealPlanId === mealPlanStore.mealPlanId);
-    },
+    queryFn: async () => await fetchGet<MealSummary[]>("/api/Meals"),
+    select: (data) => data.filter((meal) => meal.mealPlanId === mealPlanStore.mealPlanId),
     retry: 0,
     enabled: mealPlanStore.mealPlanId !== null, // Only run this query if we have mealPlanId
   });
@@ -84,7 +82,7 @@ export default function MealGrid() {
 
   const columns: GridColDef[] = [
       { field: "id", headerName: "ID", width: 70, },
-      { field: 'name', headerName: 'Name', width: 90, editable: true },
+      { field: 'name', headerName: 'Name', width: 120, editable: true },
       { field: 'totalCalories', headerName: 'Kcal', type: 'number', width: 65 },
       { field: 'totalProtein', headerName: 'Protein', type: 'number', width: 65 },
       { field: 'totalCarbohydrate', headerName: 'Carbs', type: 'number', width: 65 },
@@ -103,7 +101,10 @@ export default function MealGrid() {
           field: 'Delete', headerName: 'Delete', type: 'actions', width: 100, 
           renderCell: (params) => (
               <strong>
-                  <Button variant="outlined" color="error" onClick={() => fetchDelete(`/api/MealName/`, params.row.id).then(() => refetchMealNames())}>
+                  <Button 
+                    variant="outlined" 
+                    color="error" 
+                    onClick={() => fetchDelete(`/api/MealName/`, params.row.id).then(() => refetchMealNames())}>
                       <DeleteIcon />
                   </Button>
               </strong>

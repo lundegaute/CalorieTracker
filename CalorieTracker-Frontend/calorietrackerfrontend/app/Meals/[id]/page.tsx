@@ -3,6 +3,7 @@ import { MealDetails } from "@/components/DataGrids/MealDetails";
 import FoodSearchPanel from "@/components/MealDetails/FoodSearchPanel";
 import { MacroPieChart } from "@/components/MealDetails/MacroPieChart";
 import { QuickMacros } from "@/components/MealDetails/QuickMacros";
+import { ShowMealDetailsName} from "@/components/MealName/ShowMealName";
 
 export default async function Meal({ params }: {params: { id: string }}) {
   const mealNameId = Number(params.id);
@@ -13,7 +14,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
       <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
         <div>
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-emerald-300 to-teal-200 bg-clip-text text-transparent">
-            Meal #{mealNameId}
+            <ShowMealDetailsName mealNameId={mealNameId}/>
           </h1>
           <p className="mt-2 text-sm text-slate-400">
             Review foods, adjust quantities, and monitor macros.
@@ -61,8 +62,6 @@ export default async function Meal({ params }: {params: { id: string }}) {
     </main>
   );
 }
-
-/* --- Inline utility components (server-safe; no handlers) --- */
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (

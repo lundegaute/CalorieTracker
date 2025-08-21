@@ -75,7 +75,9 @@ namespace CalorieTracker.Services
             Validation.CheckIfIdInRange(id);
             var mealPlanToDelete = await _context.MealPlans
                 .Include(mp => mp.User)
-                .Where(mp => mp.User.Id == userID)
+                .Where(mp =>
+                    mp.User.Id == userID && 
+                    mp.Id == id)
                 .FirstOrDefaultAsync();
             Validation.CheckIfNull(mealPlanToDelete);
 

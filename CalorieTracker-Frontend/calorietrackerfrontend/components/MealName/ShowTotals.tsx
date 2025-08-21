@@ -3,34 +3,46 @@ import { fetchGet } from "@/Fetch/fetchGet";
 import { MealSummary, MealTotals, ErrorResponse } from "@/Types/types";
 import {useQuery} from "@tanstack/react-query";
 import useMealPlanStore from "../Zustand/MealPlanStore";
+import { useEffect, useState } from "react";
 
 
 // FIX: Calculating correct calories and macro data for each meal plan
 export function ShowTotals() {
+    const [totalMeals, setTotalMeals] = useState(0);
+    const [totalCalories, setTotalCalories] = useState(0);
+    const [avgCalories, setAvgCalories] = useState(0);
     const mealPlanStore = useMealPlanStore();
-    const { data, isLoading, error} = useQuery<MealSummary[], ErrorResponse, MealTotals>({
-        queryKey: ["MealsSummary"],
-        queryFn: async () => {
-          const allMeals = await fetchGet<MealSummary[]>("/api/Meals");
-          return allMeals.filter(meal => meal.mealPlanId === mealPlanStore.mealPlanId);
-        },
-        select: (meals) => {
-            const totalCalories = meals.reduce((sum, meal) => sum += meal.totalCalories || 0, 0);
-            const totalMeals = meals.length;
-            const avgCalories = totalCalories ? Math.round(totalCalories / totalMeals) : 0;
-            return { totalCalories, totalMeals, avgCalories };
-        },
+    const { data, isLoading, error} = useQuery<MealSummary[], ErrorResponse>({
+        queryKey: ["MealsSummary", mealPlanStore.mealPlanId],
+        queryFn: async () => await fetchGet<MealSummary[]>("/api/Meals"),
         retry: 0,
     });
+
+    function calculateTotals(filteredData: MealSummary[]) {
+        const newTotalCals = filteredData.reduce((sum, meal) => sum += meal.totalCalories || 0, 0);
+        const newTotalMeals = filteredData.length;
+        const newAvgCals = Math.round(newTotalCals / newTotalMeals);
+
+        setTotalCalories(newTotalCals);
+        setTotalMeals(newTotalMeals);
+        setAvgCalories(newAvgCals);
+    }
+
+    useEffect(() => {
+      if ( !isLoading && data) {
+        const filteredData = data.filter(meal => meal.mealPlanId === mealPlanStore.mealPlanId);
+        calculateTotals(filteredData);
+      }
+    },[mealPlanStore.mealPlanId, data, isLoading] )
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>{error.message.Error[0]}</div>
     if (!data) return <div>No Data</div>
     return (
         <div className="space-y-3">
-            <InfoCard title={"Total Meals"} value={data.totalMeals || 0}/>
-            <InfoCard title={"Total Calories"} value={Math.round(data.totalCalories) || 0}/>
-            <InfoCard title={"Avg Kcal / Meal"} value={data.avgCalories || 0}/>
+            <InfoCard title={"Total Meals"} value={totalMeals || 0}/>
+            <InfoCard title={"Total Calories"} value={Math.round(totalCalories) || 0}/>
+            <InfoCard title={"Avg Kcal / Meal"} value={avgCalories || 0}/>
         </div>
     )
 

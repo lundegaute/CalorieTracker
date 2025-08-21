@@ -25,6 +25,7 @@ export async function fetchGet<T>(url: string): Promise<T> {
         const data: T = await res.json();
         return data;
     } catch (error) {
+        console.log(error);
         const errorResponse: ErrorResponse = {
             message: { Error: ["Network error occurred while fetching data"] },
             type: "NetworkError",
