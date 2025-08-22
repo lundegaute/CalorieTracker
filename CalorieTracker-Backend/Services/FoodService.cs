@@ -95,11 +95,10 @@ namespace CalorieTracker.Services
             {
                 return "Database Already initialized with data";
             }
-            foreach (var food in foods)
-            {
-                var filter = Builders<FoodSummary>.Filter.Eq(f => f.Name, food.Name);
-                await _foodsCollection.ReplaceOneAsync(filter, food, new ReplaceOptions { IsUpsert = true });
-            }
+
+            //var filter = Builders<FoodSummary>.Filter.Eq(f => f.Name, food.Name);
+            await _foodsCollection.InsertManyAsync(foods);
+            
             return "Database initialized successfully";
         }
     }

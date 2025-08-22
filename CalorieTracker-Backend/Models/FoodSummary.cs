@@ -12,7 +12,7 @@ namespace CalorieTracker.Models
         public double? Protein { get; set; }
         public double? Carbohydrates { get; set; }
         public double? Fat { get; set; }
-        public ICollection<Meal>? Meals { get; set; }
+        //public ICollection<Meal>? Meals { get; set; }
     }
     public class FoodSummarySql // For MySQL
     {
