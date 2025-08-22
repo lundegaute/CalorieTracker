@@ -1,10 +1,11 @@
 import Swal from "sweetalert2";
 
-export async function sweetAlertInput(title: string) {
+export async function sweetAlertInput(title: string, mealPlanName: string) {
     const result = await Swal.fire( {
         title: title,
         input: "text",
         inputPlaceholder: "Enter name",
+        inputValue: mealPlanName,
         showCancelButton: true,
         confirmButtonText: "Add",
         cancelButtonText: "Cancel"

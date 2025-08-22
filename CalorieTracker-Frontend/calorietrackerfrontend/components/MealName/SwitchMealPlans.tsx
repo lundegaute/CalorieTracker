@@ -81,7 +81,7 @@ export default function SwitchMealPlans() {
     if (!mealPlanList || !mealPlanList[mealPlanIndex]) return;
     
     const currentPlan = mealPlanList[mealPlanIndex];
-    const newName = await sweetAlertInput("Rename meal plan");
+    const newName = await sweetAlertInput("Rename meal plan", currentPlan.name);
     if (!newName || newName === currentPlan.name) return;
 
     // Update the meal plan name via API

@@ -13,9 +13,7 @@ export default async function Meal({ params }: {params: { id: string }}) {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
         <div>
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-emerald-300 to-teal-200 bg-clip-text text-transparent">
             <ShowMealDetailsName mealNameId={mealNameId}/>
-          </h1>
           <p className="mt-2 text-sm text-slate-400">
             Review foods, adjust quantities, and monitor macros.
           </p>

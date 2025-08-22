@@ -28,7 +28,9 @@ namespace CalorieTracker.Services
         public async Task<ResponseMealNameDTO> GetMealName(int id, int userID)
         {
             Validation.CheckIfIdInRange(id); // Check if id is greater than 0
-            var mealName = await _context.MealNames.FirstOrDefaultAsync(mn => mn.Id == id && mn.User.Id == userID);
+            var mealName = await _context.MealNames
+                .Include(mn => mn.MealPlan)
+                .FirstOrDefaultAsync(mn => mn.Id == id && mn.User.Id == userID);
             Validation.CheckIfNull(mealName); // Check if mealName is null
             var response = ResponseBuilder.MealName([mealName!]);
             return response.FirstOrDefault()!;
