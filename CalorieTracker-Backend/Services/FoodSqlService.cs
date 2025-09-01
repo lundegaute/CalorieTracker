@@ -5,8 +5,7 @@ using CalorieTracker.HelperMethods;
 using CalorieTracker.DTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CalorieTracker.Services
-{
+namespace CalorieTracker.Services;
     public class FoodSqlService
     {
         private readonly DataContext _context;
@@ -86,4 +85,3 @@ namespace CalorieTracker.Services
         }
         
     }
-}

@@ -120,6 +120,11 @@ export type ErrorResponse = {
   "redirect"?: string; // Optional redirect field
 }
 
+export type RegisterUserDTO = {
+    email: string;
+    password: string;
+}
+
 export type LoginUserDTO = {
     email: string;
     password: string;
