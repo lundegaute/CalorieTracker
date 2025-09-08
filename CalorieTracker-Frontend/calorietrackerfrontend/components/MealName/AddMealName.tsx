@@ -13,7 +13,7 @@ function AddMealName() {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         console.log("----- Add MealName from sweetalert -----");
-        const mealName = {name: await sweetAlertInput("Add meal name")};
+        const mealName = {name: await sweetAlertInput("Add meal name", "")};
         if ( mealName.name && mealPlanStore.mealPlanId ) {
             const newMealName: AddMealNameDTO = {
                 name: mealName.name,
