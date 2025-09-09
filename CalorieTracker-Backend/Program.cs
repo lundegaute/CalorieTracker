@@ -70,6 +70,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Register MongoDB settings
+// Azure password Mongodbazure99
 builder.Services.Configure<MongoDbSettingsClass>(builder.Configuration.GetSection("MongoDbSettings"));
 
 // Register MongoDB client
