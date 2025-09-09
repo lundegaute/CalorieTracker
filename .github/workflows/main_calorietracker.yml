@@ -23,6 +23,9 @@ jobs:
         with:
           dotnet-version: '9.x'
 
+      - name: Enter backend folder
+        run: cd CalorieTracker-Backend
+        
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
@@ -62,4 +65,5 @@ jobs:
           app-name: 'CalorieTracker'
           slot-name: 'Production'
           package: .
+
           
